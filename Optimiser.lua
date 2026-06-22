@@ -8,25 +8,26 @@ local ipairs = ipairs
 
 local SPECS = {
     -- Warriors
-    ["Arms"] = { class="Warrior", role="Melee", buffs={"Battle Shout", "Commanding Shout", "Blood Frenzy", "Sunder Armor"} },
-    ["Fury"] = { class="Warrior", role="Melee", buffs={"Battle Shout", "Commanding Shout", "Sunder Armor"} },
-    ["Protection"] = { class="Warrior", role="Tank", buffs={"Battle Shout", "Commanding Shout", "Sunder Armor"} },
+    ["Arms"] = { class="Warrior", role="Melee", buffs={"Battle Shout", "Commanding Shout", "Blood Frenzy", "Sunder Armor", "Improved Demoralizing Shout", "Improved Thunder Clap"} },
+    ["Fury"] = { class="Warrior", role="Melee", buffs={"Battle Shout", "Commanding Shout", "Sunder Armor", "Improved Demoralizing Shout"} },
+    ["Protection"] = { class="Warrior", role="Tank", buffs={"Battle Shout", "Commanding Shout", "Sunder Armor", "Improved Demoralizing Shout", "Improved Thunder Clap"} },
     
     -- Paladins
     ["Holy1"] = { class="Paladin", role="Healer", buffs={"Blessing of Kings", "Blessing of Might", "Blessing of Wisdom", "Blessing of Salvation", "Devotion Aura", "Concentration Aura", "Judgement of Wisdom", "Judgement of Light"} },
     ["Holy"] = { class="Paladin", role="Healer", buffs={"Blessing of Kings", "Blessing of Might", "Blessing of Wisdom", "Blessing of Salvation", "Devotion Aura", "Concentration Aura", "Judgement of Wisdom", "Judgement of Light"} },
     ["Protection1"] = { class="Paladin", role="Tank", buffs={"Blessing of Kings", "Blessing of Might", "Blessing of Wisdom", "Blessing of Salvation", "Devotion Aura", "Retribution Aura", "Judgement of Wisdom", "Judgement of Light", "Blessing of Sanctuary"} },
+    ["Retribution"] = { class="Paladin", role="Melee", buffs={"Blessing of Kings", "Blessing of Might", "Blessing of Wisdom", "Blessing of Salvation", "Sanctity Aura", "Retribution Aura", "Judgement of Wisdom", "Judgement of Light", "Improved Seal of the Crusader"} },
     ["Protection"] = { class="Warrior", role="Tank", buffs={"Battle Shout", "Commanding Shout", "Sunder Armor"} },
     
     -- Hunters
-    ["Beastmastery"] = { class="Hunter", role="Ranged", buffs={"Ferocious Inspiration"} },
-    ["Marksmanship"] = { class="Hunter", role="Ranged", buffs={"Trueshot Aura"} },
-    ["Survival"] = { class="Hunter", role="Ranged", buffs={"Expose Weakness"} },
+    ["Beastmastery"] = { class="Hunter", role="Ranged", buffs={"Ferocious Inspiration", "Scorpid Sting"} },
+    ["Marksmanship"] = { class="Hunter", role="Ranged", buffs={"Trueshot Aura", "Scorpid Sting"} },
+    ["Survival"] = { class="Hunter", role="Ranged", buffs={"Expose Weakness", "Scorpid Sting"} },
     
     -- Rogues
-    ["Assassination"] = { class="Rogue", role="Melee", buffs={"Expose Armor"} },
-    ["Combat"] = { class="Rogue", role="Melee", buffs={"Expose Armor"} },
-    ["Subtlety"] = { class="Rogue", role="Melee", buffs={"Expose Armor", "Hemorrhage"} },
+    ["Assassination"] = { class="Rogue", role="Melee", buffs={"Expose Armor", "Improved Expose Armor"} },
+    ["Combat"] = { class="Rogue", role="Melee", buffs={"Expose Armor", "Improved Expose Armor"} },
+    ["Subtlety"] = { class="Rogue", role="Melee", buffs={"Expose Armor", "Improved Expose Armor", "Hemorrhage"} },
     
     -- Priests
     ["Discipline"] = { class="Priest", role="Healer", buffs={"Power Word: Fortitude", "Shadow Protection", "Divine Spirit", "Pain Suppression"} },
@@ -35,27 +36,27 @@ local SPECS = {
     ["Smite"] = { class="Priest", role="Ranged", buffs={"Power Word: Fortitude", "Shadow Protection"} },
     
     -- Shamans
-    ["Elemental"] = { class="Shaman", role="Ranged", buffs={"Bloodlust/Heroism", "Totem of Wrath", "Wrath of Air Totem", "Mana Spring Totem", "Tremor Totem"} },
-    ["Enhancement"] = { class="Shaman", role="Melee", buffs={"Bloodlust/Heroism", "Windfury Totem", "Unleashed Rage", "Strength of Earth Totem", "Grace of Air Totem", "Tremor Totem"} },
-    ["Restoration1"] = { class="Shaman", role="Healer", buffs={"Bloodlust/Heroism", "Mana Tide Totem", "Mana Spring Totem", "Wrath of Air Totem", "Healing Stream Totem", "Tremor Totem"} },
-    ["Restoration"] = { class="Shaman", role="Healer", buffs={"Bloodlust/Heroism", "Mana Tide Totem", "Mana Spring Totem", "Wrath of Air Totem", "Healing Stream Totem", "Tremor Totem"} },
+    ["Elemental"] = { class="Shaman", role="Ranged", buffs={"Bloodlust", "Totem of Wrath", "Wrath of Air Totem", "Mana Spring Totem", "Tremor Totem"} },
+    ["Enhancement"] = { class="Shaman", role="Melee", buffs={"Bloodlust", "Windfury Totem", "Unleashed Rage", "Strength of Earth Totem", "Grace of Air Totem", "Tremor Totem"} },
+    ["Restoration1"] = { class="Shaman", role="Healer", buffs={"Bloodlust", "Mana Tide Totem", "Mana Spring Totem", "Wrath of Air Totem", "Healing Stream Totem", "Tremor Totem", "Earth Shield"} },
+    ["Restoration"] = { class="Shaman", role="Healer", buffs={"Bloodlust", "Mana Tide Totem", "Mana Spring Totem", "Wrath of Air Totem", "Healing Stream Totem", "Tremor Totem", "Earth Shield"} },
     
     -- Mages
-    ["Arcane"] = { class="Mage", role="Ranged", buffs={"Arcane Brilliance"} },
-    ["Fire"] = { class="Mage", role="Ranged", buffs={"Arcane Brilliance", "Improved Scorch"} },
-    ["Frost"] = { class="Mage", role="Ranged", buffs={"Arcane Brilliance"} },
+    ["Arcane"] = { class="Mage", role="Ranged", buffs={"Arcane Intellect"} },
+    ["Fire"] = { class="Mage", role="Ranged", buffs={"Arcane Intellect", "Improved Scorch"} },
+    ["Frost"] = { class="Mage", role="Ranged", buffs={"Arcane Intellect", "Winter's Chill"} },
     
     -- Warlocks
-    ["Affliction"] = { class="Warlock", role="Ranged", buffs={"Blood Pact", "Curse of the Elements", "Curse of Recklessness", "Shadow Embrace"} },
-    ["Demonology"] = { class="Warlock", role="Ranged", buffs={"Blood Pact", "Curse of the Elements", "Curse of Recklessness"} },
-    ["Destruction"] = { class="Warlock", role="Ranged", buffs={"Blood Pact", "Curse of the Elements", "Curse of Recklessness"} },
+    ["Affliction"] = { class="Warlock", role="Ranged", buffs={"Curse of the Elements", "Curse of Recklessness", "Shadow Embrace", "Malediction", "Improved Healthstone"} },
+    ["Demonology"] = { class="Warlock", role="Ranged", buffs={"Curse of the Elements", "Curse of Recklessness", "Improved Healthstone"} },
+    ["Destruction"] = { class="Warlock", role="Ranged", buffs={"Curse of the Elements", "Curse of Recklessness", "Improved Healthstone", "Improved Shadow Bolt"} },
     
     -- Druids
-    ["Balance"] = { class="Druid", role="Ranged", buffs={"Mark of the Wild", "Moonkin Aura", "Improved Faerie Fire", "Insect Swarm"} },
-    ["Dreamstate"] = { class="Druid", role="Ranged", buffs={"Mark of the Wild", "Improved Faerie Fire"} },
-    ["Feral"] = { class="Druid", role="Melee", buffs={"Mark of the Wild", "Leader of the Pack", "Mangle", "Faerie Fire"} },
-    ["Guardian"] = { class="Druid", role="Tank", buffs={"Mark of the Wild", "Leader of the Pack", "Mangle", "Faerie Fire"} },
-    ["Restoration"] = { class="Druid", role="Healer", buffs={"Mark of the Wild", "Tree of Life Aura"} },
+    ["Balance"] = { class="Druid", role="Ranged", buffs={"Mark of the Wild", "Improved Mark of the Wild", "Moonkin Form", "Improved Faerie Fire", "Insect Swarm", "Innervate"} },
+    ["Dreamstate"] = { class="Druid", role="Ranged", buffs={"Mark of the Wild", "Improved Mark of the Wild", "Improved Faerie Fire", "Innervate"} },
+    ["Feral"] = { class="Druid", role="Melee", buffs={"Mark of the Wild", "Improved Mark of the Wild", "Leader of the Pack", "Mangle", "Faerie Fire", "Innervate"} },
+    ["Guardian"] = { class="Druid", role="Tank", buffs={"Mark of the Wild", "Improved Mark of the Wild", "Leader of the Pack", "Mangle", "Faerie Fire", "Innervate"} },
+    ["Restoration"] = { class="Druid", role="Healer", buffs={"Mark of the Wild", "Improved Mark of the Wild", "Tree of Life", "Innervate"} },
 }
 
 Addon.SPECS = SPECS
@@ -89,7 +90,7 @@ Addon.BUFF_SPELL_IDS = {
     ["Vampiric Touch"] = 34914,
     ["Misery"] = 33195,
     ["Shadow Weaving"] = 15332,
-    ["Bloodlust/Heroism"] = 2825,
+    ["Bloodlust"] = 2825,
     ["Totem of Wrath"] = 30706,
     ["Wrath of Air Totem"] = 3738,
     ["Mana Spring Totem"] = 5675,
@@ -100,20 +101,31 @@ Addon.BUFF_SPELL_IDS = {
     ["Grace of Air Totem"] = 8835,
     ["Mana Tide Totem"] = 16190,
     ["Healing Stream Totem"] = 5394,
-    ["Arcane Brilliance"] = 27127,
+    ["Earth Shield"] = 974,
+    ["Arcane Intellect"] = 27127,
     ["Improved Scorch"] = 12873,
-    ["Blood Pact"] = 6307,
+    ["Winter's Chill"] = 11180,
     ["Curse of the Elements"] = 27228,
     ["Curse of Recklessness"] = 27268,
     ["Shadow Embrace"] = 32385,
+    ["Malediction"] = 32484,
+    ["Improved Healthstone"] = 6262,
+    ["Improved Shadow Bolt"] = 17803,
     ["Mark of the Wild"] = 26990,
-    ["Moonkin Aura"] = 24907,
+    ["Improved Mark of the Wild"] = 16998,
+    ["Moonkin Form"] = 24907,
     ["Improved Faerie Fire"] = 33602,
     ["Insect Swarm"] = 27013,
     ["Leader of the Pack"] = 24932,
     ["Mangle"] = 33878,
     ["Faerie Fire"] = 26993,
-    ["Tree of Life Aura"] = 33891,
+    ["Tree of Life"] = 33891,
+    ["Innervate"] = 29166,
+    ["Improved Demoralizing Shout"] = 12879,
+    ["Improved Thunder Clap"] = 12666,
+    ["Improved Seal of the Crusader"] = 20336,
+    ["Scorpid Sting"] = 3043,
+    ["Improved Expose Armor"] = 14169,
 }
 
 Addon.PHYSICAL_BUFFS = {
@@ -133,6 +145,10 @@ Addon.PHYSICAL_BUFFS = {
     ["Mangle"] = true,
     ["Faerie Fire"] = true,
     ["Commanding Shout"] = true,
+    ["Improved Demoralizing Shout"] = true,
+    ["Improved Thunder Clap"] = true,
+    ["Improved Expose Armor"] = true,
+    ["Scorpid Sting"] = true,
 }
 
 Addon.SPELL_BUFFS = {
@@ -140,16 +156,20 @@ Addon.SPELL_BUFFS = {
     ["Mana Spring Totem"] = true,
     ["Mana Tide Totem"] = true,
     ["Vampiric Touch"] = true,
-    ["Moonkin Aura"] = true,
+    ["Moonkin Form"] = true,
     ["Totem of Wrath"] = true,
     ["Wrath of Air Totem"] = true,
-    ["Arcane Brilliance"] = true,
+    ["Arcane Intellect"] = true,
     ["Improved Scorch"] = true,
     ["Curse of the Elements"] = true,
     ["Shadow Weaving"] = true,
     ["Misery"] = true,
     ["Divine Spirit"] = true,
     ["Judgement of Wisdom"] = true,
+    ["Malediction"] = true,
+    ["Winter's Chill"] = true,
+    ["Improved Shadow Bolt"] = true,
+    ["Improved Seal of the Crusader"] = true,
 }
 
 Addon.IGNORED_UI_BUFFS = {
@@ -160,12 +180,15 @@ Addon.IGNORED_UI_BUFFS = {
     ["Concentration Aura"] = true,
     ["Retribution Aura"] = true,
     ["Blessing of Sanctuary"] = true,
-    ["Blood Pact"] = true,
     ["Healing Stream Totem"] = true,
     ["Pain Suppression"] = true,
-    ["Tree of Life Aura"] = true,
+    ["Tree of Life"] = true,
     ["Mark of the Wild"] = true,
+    ["Improved Mark of the Wild"] = true,
     ["Judgement of Light"] = true,
+    ["Earth Shield"] = true,
+    ["Improved Healthstone"] = true,
+    ["Innervate"] = true,
 }
 
 function Addon.Optimiser:GetPlayerRole(spec)

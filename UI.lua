@@ -12,6 +12,20 @@ local math_abs = math.abs
 -- Cache for spell icons to avoid redundant C-API lookups
 local IconCache = {}
 
+local function CreateGhostFrame()
+    local ghost = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    ghost:SetSize(164, 28)
+    ghost:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
+    ghost:SetBackdropColor(0.25, 0.25, 0.25, 0.8)
+    ghost:SetFrameStrata("TOOLTIP")
+    ghost.text = ghost:CreateFontString(nil, "OVERLAY")
+    ghost.text:SetFontObject("GameFontHighlightSmall")
+    ghost.text:SetAllPoints()
+    ghost.text:SetJustifyH("LEFT")
+    ghost:Hide()
+    return ghost
+end
+
 local CLASS_COLORS = {
     ["Warrior"] = "|cFFC79C6E",
     ["Paladin"] = "|cFFF58CBA",
@@ -203,7 +217,26 @@ function Addon.UI:CreateMainFrame()
                 if not Addon.Core.CurrentGroups or not Addon.Core.CurrentGroups[self.groupIndex][self.playerIndex] then return end
                 Addon.UI.DraggingPlayer = { groupIndex = self.groupIndex, playerIndex = self.playerIndex }
                 self:SetAlpha(0.3)
-                SetCursor("ITEM_CURSOR")
+                
+                if not Addon.UI.GhostFrame then Addon.UI.GhostFrame = CreateGhostFrame() end
+                local ghost = Addon.UI.GhostFrame
+                ghost.text:SetText(self.text:GetText())
+                ghost:Show()
+                ghost:SetScript("OnUpdate", function(f)
+                    if not IsMouseButtonDown("LeftButton") then
+                        f:SetScript("OnUpdate", nil)
+                        f:Hide()
+                        Addon.UI.DraggingPlayer = nil
+                        if Addon.Core.CurrentGroups then
+                            local buffs = Addon.Optimiser:AnalyzeBuffs(Addon.Core.CurrentGroups)
+                            Addon.UI:RenderGroups(Addon.Core.CurrentGroups, buffs)
+                        end
+                        return
+                    end
+                    local x, y = GetCursorPosition()
+                    local scale = f:GetEffectiveScale()
+                    f:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x / scale, y / scale)
+                end)
             end)
             
             pf:SetScript("OnReceiveDrag", function(self)
@@ -212,7 +245,10 @@ function Addon.UI:CreateMainFrame()
                 
                 if drag.groupIndex == self.groupIndex and drag.playerIndex == self.playerIndex then
                     self:SetAlpha(1)
-                    ResetCursor()
+                    if Addon.UI.GhostFrame then 
+                        Addon.UI.GhostFrame:SetScript("OnUpdate", nil)
+                        Addon.UI.GhostFrame:Hide()
+                    end
                     Addon.UI.DraggingPlayer = nil
                     return
                 end
@@ -234,7 +270,10 @@ function Addon.UI:CreateMainFrame()
                     table.insert(g2, p1)
                 end
                 
-                ResetCursor()
+                if Addon.UI.GhostFrame then 
+                    Addon.UI.GhostFrame:SetScript("OnUpdate", nil)
+                    Addon.UI.GhostFrame:Hide()
+                end
                 Addon.UI.DraggingPlayer = nil
                 
                 Addon.Optimiser:RefreshGroupBuffs(groups)
