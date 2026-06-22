@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.1.1] - UI Refinements & Tank Synergies
+### Added
+- **Multi-Row Group Headers**: Group headers have been expanded and refactored using a flex-grid layout. They can now display up to 24 buff icons over 3 visually packed rows, guaranteeing all synergies are visible.
+- **Dynamic DPS Group Tags**: Mixed physical and caster groups (like Hunter/Shaman/Druid) are now smartly labeled as "DPS" rather than forcing a strict "Melee" or "Casters" label.
+- **Tank Blood Pact**: *Blood Pact* (Spell ID 27268) is now classified as a survival utility and stripped from all UI headers, *except* for the Tanks group, where the stamina gain is critically flagged as a primary tank synergy!
+
+### Fixed
+- Fixed an issue where the Buffs & Debuffs checklist panel would visually overlap the player groups when expanded.
+- Fixed spell ID mapping conflicts for Warlocks and securely anchored *Bloodlust* to Spell ID 2825.
+
+
 ## [v1.1] - Advanced Meta & Interactive UI
 ### Added
 - **Interactive Drag & Drop**: Players can now be manually dragged and dropped between groups in the UI to fine-tune synergies. Buffs are instantly recalculated and redrawn upon swapping.

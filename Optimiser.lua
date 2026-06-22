@@ -47,9 +47,9 @@ local SPECS = {
     ["Frost"] = { class="Mage", role="Ranged", buffs={"Arcane Intellect", "Winter's Chill"} },
     
     -- Warlocks
-    ["Affliction"] = { class="Warlock", role="Ranged", buffs={"Curse of the Elements", "Curse of Recklessness", "Shadow Embrace", "Malediction", "Improved Healthstone"} },
-    ["Demonology"] = { class="Warlock", role="Ranged", buffs={"Curse of the Elements", "Curse of Recklessness", "Improved Healthstone"} },
-    ["Destruction"] = { class="Warlock", role="Ranged", buffs={"Curse of the Elements", "Curse of Recklessness", "Improved Healthstone", "Improved Shadow Bolt"} },
+    ["Affliction"] = { class="Warlock", role="Ranged", buffs={"Blood Pact", "Curse of the Elements", "Curse of Recklessness", "Shadow Embrace", "Malediction", "Improved Healthstone"} },
+    ["Demonology"] = { class="Warlock", role="Ranged", buffs={"Blood Pact", "Curse of the Elements", "Curse of Recklessness", "Improved Healthstone"} },
+    ["Destruction"] = { class="Warlock", role="Ranged", buffs={"Blood Pact", "Curse of the Elements", "Curse of Recklessness", "Improved Healthstone", "Improved Shadow Bolt"} },
     
     -- Druids
     ["Balance"] = { class="Druid", role="Ranged", buffs={"Mark of the Wild", "Improved Mark of the Wild", "Moonkin Form", "Improved Faerie Fire", "Insect Swarm", "Innervate"} },
@@ -106,7 +106,8 @@ Addon.BUFF_SPELL_IDS = {
     ["Improved Scorch"] = 12873,
     ["Winter's Chill"] = 11180,
     ["Curse of the Elements"] = 27228,
-    ["Curse of Recklessness"] = 27268,
+    ["Curse of Recklessness"] = 27226,
+    ["Blood Pact"] = 27268,
     ["Shadow Embrace"] = 32385,
     ["Malediction"] = 32484,
     ["Improved Healthstone"] = 6262,
@@ -189,6 +190,7 @@ Addon.IGNORED_UI_BUFFS = {
     ["Earth Shield"] = true,
     ["Improved Healthstone"] = true,
     ["Innervate"] = true,
+    ["Blood Pact"] = true,
 }
 
 function Addon.Optimiser:GetPlayerRole(spec)
@@ -434,6 +436,9 @@ function Addon.Optimiser:RefreshGroupBuffs(groups)
                     local skip = false
                     if Addon.IGNORED_UI_BUFFS and Addon.IGNORED_UI_BUFFS[buffName] then
                         skip = true
+                        if buffName == "Blood Pact" and groupRole == "Tanks" then
+                            skip = false
+                        end
                     elseif isCasterOrHealer and Addon.PHYSICAL_BUFFS[buffName] then
                         skip = true
                     elseif isMeleeOrTank and Addon.SPELL_BUFFS[buffName] then
