@@ -176,12 +176,70 @@ function Addon.UI:CreateMainFrame()
         gf.players = {}
         gf.playerIcons = {}
         for p=1, 5 do
-            local pf = gf:CreateFontString(nil, "OVERLAY")
-            pf:SetFontObject("GameFontHighlightSmall")
+            local pf = CreateFrame("Button", nil, gf)
+            pf:SetSize(164, 28)
             pf:SetPoint("TOPLEFT", 8, -10 - (p-1)*48 - 45)
-            pf:SetWidth(164)
-            pf:SetJustifyH("LEFT")
-            pf:SetText("")
+            
+            local pfText = pf:CreateFontString(nil, "OVERLAY")
+            pfText:SetFontObject("GameFontHighlightSmall")
+            pfText:SetAllPoints()
+            pfText:SetJustifyH("LEFT")
+            pfText:SetText("")
+            pf.text = pfText
+            
+            pf.groupIndex = i
+            pf.playerIndex = p
+            
+            pf:RegisterForDrag("LeftButton")
+            pf:SetScript("OnDragStart", function(self)
+                if not Addon.Core.CurrentGroups or not Addon.Core.CurrentGroups[self.groupIndex][self.playerIndex] then return end
+                Addon.UI.DraggingPlayer = { groupIndex = self.groupIndex, playerIndex = self.playerIndex }
+                self:SetAlpha(0.3)
+                SetCursor("ITEM_CURSOR")
+            end)
+            
+            pf:SetScript("OnReceiveDrag", function(self)
+                if not Addon.UI.DraggingPlayer then return end
+                local drag = Addon.UI.DraggingPlayer
+                
+                if drag.groupIndex == self.groupIndex and drag.playerIndex == self.playerIndex then
+                    self:SetAlpha(1)
+                    ResetCursor()
+                    Addon.UI.DraggingPlayer = nil
+                    return
+                end
+                
+                local groups = Addon.Core.CurrentGroups
+                if not groups then return end
+                
+                local g1 = groups[drag.groupIndex]
+                local g2 = groups[self.groupIndex]
+                
+                local p1 = g1[drag.playerIndex]
+                local p2 = g2[self.playerIndex]
+                
+                if p2 then
+                    g1[drag.playerIndex] = p2
+                    g2[self.playerIndex] = p1
+                else
+                    table.remove(g1, drag.playerIndex)
+                    table.insert(g2, p1)
+                end
+                
+                ResetCursor()
+                Addon.UI.DraggingPlayer = nil
+                
+                Addon.Optimiser:RefreshGroupBuffs(groups)
+                local buffs = Addon.Optimiser:AnalyzeBuffs(groups)
+                Addon.UI:RenderGroups(groups, buffs)
+            end)
+            
+            pf:SetScript("OnMouseUp", function(self)
+                if Addon.UI.DraggingPlayer then
+                    self:GetScript("OnReceiveDrag")(self)
+                end
+            end)
+            
             table_insert(gf.players, pf)
             
             -- Prepare a container for icons
@@ -330,7 +388,8 @@ function Addon.UI:RenderGroups(groups, activeBuffsList)
             if player then
                 local colorCode = CLASS_COLORS[player.class] or "|cFFFFFFFF"
                 local displaySpec = string.gsub(player.spec, "%d+$", "")
-                pf:SetText(colorCode .. player.name .. "|r\n|cFF999999" .. displaySpec .. " " .. player.class .. "|r")
+                pf.text:SetText(colorCode .. player.name .. "|r\n|cFF999999" .. displaySpec .. " " .. player.class .. "|r")
+                pf:SetAlpha(1)
                 
                 -- Render Icons
                 local specInfo = Addon.SPECS and Addon.SPECS[player.spec]
@@ -360,7 +419,8 @@ function Addon.UI:RenderGroups(groups, activeBuffsList)
                     for i=1, 8 do gf.playerIcons[pIndex][i]:Hide() end
                 end
             else
-                pf:SetText("")
+                pf.text:SetText("")
+                pf:SetAlpha(1)
                 for i=1, 8 do gf.playerIcons[pIndex][i]:Hide() end
             end
         end

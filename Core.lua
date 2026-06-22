@@ -82,6 +82,7 @@ function Addon.Core:OnGenerateClicked(jsonStr)
     print("TBC Raid Comp: Optimising " .. #players .. " players...")
     
     local groups = Addon.Optimiser:Optimise(players)
+    Addon.Core.CurrentGroups = groups
     local buffs = Addon.Optimiser:AnalyzeBuffs(groups)
     
     Addon.UI:RenderGroups(groups, buffs)

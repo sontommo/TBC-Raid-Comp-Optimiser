@@ -376,6 +376,12 @@ function Addon.Optimiser:Optimise(players)
         elseif getFree(1) > 0 then addToGroup(ranged[i], 1) end
     end
 
+    self:RefreshGroupBuffs(groups)
+
+    return groups
+end
+
+function Addon.Optimiser:RefreshGroupBuffs(groups)
     for g=1, 5 do
         local groupRole = "Mixed"
         local counts = { Tank=0, Healer=0, Melee=0, Ranged=0 }
@@ -418,8 +424,6 @@ function Addon.Optimiser:Optimise(players)
             end
         end
     end
-
-    return groups
 end
 
 function Addon.Optimiser:AnalyzeBuffs(groups)
