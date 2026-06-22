@@ -126,28 +126,59 @@ function Addon.UI:CreateMainFrame()
     f.groupFrames = {}
     for i=1, 5 do
         local gf = CreateSleekFrame(groupsContainer)
-        gf:SetSize(180, 275)
+        gf:SetSize(180, 290)
         gf:SetBackdropColor(0.15, 0.15, 0.15, 1)
         
         local labelBg = CreateFrame("Frame", nil, gf, "BackdropTemplate")
         labelBg:SetPoint("TOPLEFT", 1, -1)
         labelBg:SetPoint("TOPRIGHT", -1, -1)
-        labelBg:SetHeight(25)
+        labelBg:SetHeight(45)
         labelBg:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
         labelBg:SetBackdropColor(0.1, 0.1, 0.1, 1)
         
         local label = labelBg:CreateFontString(nil, "OVERLAY")
         label:SetFontObject("GameFontNormal")
-        label:SetPoint("CENTER", 0, 0)
+        label:SetPoint("TOP", 0, -6)
         label:SetText("Group " .. i)
         gf.label = label
+        
+        local groupIconContainer = CreateFrame("Frame", nil, labelBg)
+        groupIconContainer:SetSize(160, 16)
+        groupIconContainer:SetPoint("BOTTOM", 0, 4)
+        gf.groupIconContainer = groupIconContainer
+        gf.groupIcons = {}
+        for k=1, 8 do
+            local iconF = CreateFrame("Frame", nil, groupIconContainer)
+            iconF:SetSize(14, 14)
+            iconF:SetPoint("LEFT", (k-1)*16, 0)
+            iconF:EnableMouse(true)
+            local tex = iconF:CreateTexture(nil, "ARTWORK")
+            tex:SetAllPoints()
+            iconF.texture = tex
+            
+            iconF:SetScript("OnEnter", function(self)
+                if self.spellName then
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    local query = (Addon.BUFF_SPELL_IDS and Addon.BUFF_SPELL_IDS[self.spellName]) or self.spellName
+                    if type(query) == "number" then
+                        GameTooltip:SetSpellByID(query)
+                    else
+                        GameTooltip:SetText(self.spellName, 1, 1, 1)
+                    end
+                    GameTooltip:Show()
+                end
+            end)
+            iconF:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+            iconF:Hide()
+            table_insert(gf.groupIcons, iconF)
+        end
         
         gf.players = {}
         gf.playerIcons = {}
         for p=1, 5 do
             local pf = gf:CreateFontString(nil, "OVERLAY")
             pf:SetFontObject("GameFontHighlightSmall")
-            pf:SetPoint("TOPLEFT", 8, -10 - (p-1)*50 - 25)
+            pf:SetPoint("TOPLEFT", 8, -10 - (p-1)*48 - 45)
             pf:SetWidth(164)
             pf:SetJustifyH("LEFT")
             pf:SetText("")
@@ -267,6 +298,32 @@ function Addon.UI:RenderGroups(groups, activeBuffsList)
     for gIndex, group in ipairs(groups) do
         local gf = Addon.MainFrame.groupFrames[gIndex]
         gf.label:SetText("Group " .. gIndex .. " - " .. (group.label or "Mixed"))
+        
+        if group.buffs then
+            local numIcons = math.min(#group.buffs, 8)
+            local totalWidth = numIcons * 16
+            gf.groupIconContainer:SetWidth(totalWidth)
+            for i=1, 8 do
+                local iconF = gf.groupIcons[i]
+                if i <= numIcons then
+                    local buffName = group.buffs[i]
+                    local query = (Addon.BUFF_SPELL_IDS and Addon.BUFF_SPELL_IDS[buffName]) or buffName
+                    local iconTexture = IconCache[query]
+                    if not iconTexture then
+                        local _, _, tex = GetSpellInfo(query)
+                        iconTexture = tex or "Interface\\Icons\\INV_Misc_QuestionMark"
+                        IconCache[query] = iconTexture
+                    end
+                    iconF.texture:SetTexture(iconTexture)
+                    iconF.spellName = buffName
+                    iconF:Show()
+                else
+                    iconF:Hide()
+                end
+            end
+        else
+            for i=1, 8 do gf.groupIcons[i]:Hide() end
+        end
         for pIndex=1, 5 do
             local pf = gf.players[pIndex]
             local player = group[pIndex]

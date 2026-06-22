@@ -293,10 +293,20 @@ function Addon.Optimiser:Optimise(players)
     end
 
     -- G4: Casters & Ranged (Shadow Priest, Boomkin, Mages, Warlocks)
+    local function groupHasSpec(gIndex, specName)
+        for _, p in ipairs(groups[gIndex]) do
+            if p.spec == specName then return true end
+        end
+        return false
+    end
+
     local function placeRangedSupport(specName)
         for i = #ranged, 1, -1 do
             if ranged[i].spec == specName then
-                if getFree(4) > 0 then addToGroup(ranged[i], 4)
+                if getFree(4) > 0 and not groupHasSpec(4, specName) then addToGroup(ranged[i], 4)
+                elseif getFree(5) > 0 and not groupHasSpec(5, specName) then addToGroup(ranged[i], 5)
+                elseif getFree(3) > 0 and not groupHasSpec(3, specName) then addToGroup(ranged[i], 3)
+                elseif getFree(4) > 0 then addToGroup(ranged[i], 4)
                 elseif getFree(5) > 0 then addToGroup(ranged[i], 5)
                 elseif getFree(3) > 0 then addToGroup(ranged[i], 3) end
                 table_remove(ranged, i)
@@ -317,9 +327,23 @@ function Addon.Optimiser:Optimise(players)
     for g=1, 5 do
         local groupRole = "Mixed"
         local counts = { Tank=0, Healer=0, Melee=0, Ranged=0 }
+        
+        groups[g].buffs = {}
+        local seenBuffs = {}
+        
         for _, p in ipairs(groups[g]) do
             local role = self:GetPlayerRole(p.spec)
             if role then counts[role] = (counts[role] or 0) + 1 end
+            
+            local sInfo = SPECS[p.spec]
+            if sInfo then
+                for _, buffName in ipairs(sInfo.buffs) do
+                    if not seenBuffs[buffName] then
+                        seenBuffs[buffName] = true
+                        table_insert(groups[g].buffs, buffName)
+                    end
+                end
+            end
         end
         if counts.Tank >= 2 then groupRole = "Tanks"
         elseif counts.Healer >= 3 then groupRole = "Healers"
