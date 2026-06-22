@@ -80,7 +80,12 @@ function Addon.UI:CreateMainFrame()
     -- Main Window
     local f = CreateSleekFrame(UIParent, "TBCRaidCompFrame")
     f:SetSize(1150, 700)
-    f:SetResizeBounds(620, 500, 1600, 1200)
+    if f.SetResizeBounds then
+        f:SetResizeBounds(620, 500, 1600, 1200)
+    elseif f.SetMinResize then
+        f:SetMinResize(620, 500)
+        f:SetMaxResize(1600, 1200)
+    end
     f:SetPoint("CENTER")
     f:SetMovable(true)
     f:SetResizable(true)
