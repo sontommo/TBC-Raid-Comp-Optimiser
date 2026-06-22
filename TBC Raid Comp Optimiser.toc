@@ -1,0 +1,11 @@
+## Interface: 20504
+## Title: WoW: The Burning Crusade Anniversary - Raid Composition Optimiser
+## Notes: Optimises 25-man raid compositions based on TBC buffs.
+## Author: Antigravity
+## Version: 1.0.0
+## SavedVariables: TBCRaidCompOptDB
+
+Libs\json.lua
+Optimiser.lua
+UI.lua
+Core.lua
