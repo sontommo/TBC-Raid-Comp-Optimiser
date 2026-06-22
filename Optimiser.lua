@@ -116,6 +116,42 @@ Addon.BUFF_SPELL_IDS = {
     ["Tree of Life Aura"] = 33891,
 }
 
+Addon.PHYSICAL_BUFFS = {
+    ["Blessing of Might"] = true,
+    ["Windfury Totem"] = true,
+    ["Unleashed Rage"] = true,
+    ["Leader of the Pack"] = true,
+    ["Sanctity Aura"] = true,
+    ["Trueshot Aura"] = true,
+    ["Ferocious Inspiration"] = true,
+    ["Expose Weakness"] = true,
+    ["Expose Armor"] = true,
+    ["Sunder Armor"] = true,
+    ["Blood Frenzy"] = true,
+    ["Hemorrhage"] = true,
+    ["Battle Shout"] = true,
+    ["Mangle"] = true,
+    ["Faerie Fire"] = true,
+    ["Commanding Shout"] = true,
+}
+
+Addon.SPELL_BUFFS = {
+    ["Blessing of Wisdom"] = true,
+    ["Mana Spring Totem"] = true,
+    ["Mana Tide Totem"] = true,
+    ["Vampiric Touch"] = true,
+    ["Moonkin Aura"] = true,
+    ["Totem of Wrath"] = true,
+    ["Wrath of Air Totem"] = true,
+    ["Arcane Brilliance"] = true,
+    ["Improved Scorch"] = true,
+    ["Curse of the Elements"] = true,
+    ["Shadow Weaving"] = true,
+    ["Misery"] = true,
+    ["Divine Spirit"] = true,
+    ["Judgement of Wisdom"] = true,
+}
+
 function Addon.Optimiser:GetPlayerRole(spec)
     if SPECS[spec] then return SPECS[spec].role end
     return "Unknown"
@@ -328,22 +364,9 @@ function Addon.Optimiser:Optimise(players)
         local groupRole = "Mixed"
         local counts = { Tank=0, Healer=0, Melee=0, Ranged=0 }
         
-        groups[g].buffs = {}
-        local seenBuffs = {}
-        
         for _, p in ipairs(groups[g]) do
             local role = self:GetPlayerRole(p.spec)
             if role then counts[role] = (counts[role] or 0) + 1 end
-            
-            local sInfo = SPECS[p.spec]
-            if sInfo then
-                for _, buffName in ipairs(sInfo.buffs) do
-                    if not seenBuffs[buffName] then
-                        seenBuffs[buffName] = true
-                        table_insert(groups[g].buffs, buffName)
-                    end
-                end
-            end
         end
         if counts.Tank >= 2 then groupRole = "Tanks"
         elseif counts.Healer >= 3 then groupRole = "Healers"
@@ -351,6 +374,31 @@ function Addon.Optimiser:Optimise(players)
         elseif counts.Ranged >= 3 then groupRole = "Casters"
         end
         groups[g].label = groupRole
+        
+        groups[g].buffs = {}
+        local seenBuffs = {}
+        
+        local isCasterOrHealer = (groupRole == "Casters" or groupRole == "Healers")
+        local isMeleeOrTank = (groupRole == "Melee" or groupRole == "Tanks")
+        
+        for _, p in ipairs(groups[g]) do
+            local sInfo = SPECS[p.spec]
+            if sInfo then
+                for _, buffName in ipairs(sInfo.buffs) do
+                    local skip = false
+                    if isCasterOrHealer and Addon.PHYSICAL_BUFFS[buffName] then
+                        skip = true
+                    elseif isMeleeOrTank and Addon.SPELL_BUFFS[buffName] then
+                        skip = true
+                    end
+                    
+                    if not skip and not seenBuffs[buffName] then
+                        seenBuffs[buffName] = true
+                        table_insert(groups[g].buffs, buffName)
+                    end
+                end
+            end
+        end
     end
 
     return groups
