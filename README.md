@@ -27,22 +27,26 @@ If you bring more than 5 Shamans (lucky you), it intelligently overflows them in
 
 ## How the Rest of the Raid is Sorted
 
-After the Shamans are perfectly locked in, it sorts the rest of the raid to stack synergies:
+After the Shamans are perfectly locked in, it sorts the rest of the raid using the elite TBC 25-man meta composition rules:
 
 ### 1. The Tanks (Group 1)
 - Protection Warriors, Protection Paladins, and Feral Bears are dumped in here.
-- **Blood Pact**: The engine actively hunts down a Warlock from the ranged pile and yanks them into the Tank group just so their Imp can give the tanks a massive stamina buff. 
-- Holy Paladins are usually stacked here as well for Devotion Aura.
+- **Tree of Life**: The engine actively hunts down a **Restoration Druid** and places them into the Tank group. The *Tree of Life* aura passively increases healing received by everyone in the group by 25% of the Druid's spirit.
+- **Blood Pact**: It pulls a Warlock from the ranged pile into the Tank group just so their Imp gives the tanks a massive stamina buff. 
 
-### 2. The Pumpers (Groups 2 & 3)
-- After the Enhancement Shamans are slotted in, it looks for **Feral Druids (Cats)**. They give Leader of the Pack (5% Melee Crit), which is huge for physical DPS.
-- **Ret Paladins** are brought in for Sanctity Aura (damage boost) and improved blessings.
-- All remaining Fury/Arms Warriors and Rogues fill up the rest of the slots so they can soak up all these auras and totems.
+### 2. The Hunter Group (Group 3)
+- All Hunters are completely stripped out of the general ranged pool and aggressively clustered together into Group 3.
+- **Ferocious Inspiration Stacking**: Because Beast Mastery hunters give a 3% damage boost to their party that natively stacks with other hunters, bunching them up creates exponential DPS returns.
+- The engine also hunts down a **Feral Druid** specifically to buff this group with *Leader of the Pack* (5% crit), which directly increases the uptime of *Ferocious Inspiration* and *Expose Weakness*.
 
-### 3. The Casters & Healers (Groups 4 & 5)
-- **Shadow Priests**: Shadow Priests provide massive damage buffs to Warlocks and act as mana batteries (Vampiric Touch). The addon explicitly prioritises placing Shadow Priests into the **Caster Group (Group 4)** so Arcane Mages and Warlocks benefit from their mana regen and Shadow Weaving.
-- **Balance Druids**: Boomkins bring Moonkin Aura (5% Spell Crit), so they get clumped up with the Mages and Warlocks in Group 4.
-- **Hunters**: Beastmastery (Ferocious Inspiration) and Survival (Expose Weakness) hunters are flexed between the physical and ranged groups depending on where there's room.
+### 3. The Melee Pumpers (Group 2)
+- Remaining **Feral Druids** and **Ret Paladins** are slotted in here for *Leader of the Pack* and *Sanctity Aura*.
+- All remaining Fury/Arms Warriors and Rogues fill up the rest of the slots so they can soak up the physical damage auras alongside the Enhancement Shaman's *Windfury Totem*.
+
+### 4. The Casters & Healers (Groups 4 & 5)
+- **Utility Spreading**: Unlike simple sorting addons that clump all support classes together, this engine intelligently distributes your mana batteries. 
+- It round-robins **Shadow Priests** and **Balance Druids** across the Caster Group (Group 4) and Healer Group (Group 5). This ensures their *Vampiric Touch* mana regeneration and *Moonkin Aura* (5% spell crit) are spread out perfectly to prevent wasted overlapping.
+- Remaining pure casters (Mages/Warlocks) backfill into Group 4 with the Elemental Shaman, while remaining healers backfill into Group 5 with the Restoration Shaman.
 
 ## The Live Buff Checklist
 
