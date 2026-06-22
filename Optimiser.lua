@@ -441,7 +441,7 @@ function Addon.Optimiser:GetPlayerBuffs(player, groupRole)
             table_insert(buffs, "Mana Spring Totem")
         elseif groupRole == "Tanks" then
             table_insert(buffs, "Grace of Air Totem")
-            table_insert(buffs, "Tremor Totem")
+            table_insert(buffs, "Windfury Totem")
             table_insert(buffs, "Healing Stream Totem")
         else
             table_insert(buffs, "Windfury Totem")
