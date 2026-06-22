@@ -191,7 +191,6 @@ Addon.IGNORED_UI_BUFFS = {
     ["Earth Shield"] = true,
     ["Improved Healthstone"] = true,
     ["Innervate"] = true,
-    ["Blood Pact"] = true,
 }
 
 function Addon.Optimiser:GetPlayerRole(spec)
@@ -407,6 +406,68 @@ function Addon.Optimiser:Optimise(players)
     return groups
 end
 
+function Addon.Optimiser:GetPlayerBuffs(player, groupRole)
+    local buffs = {}
+    local sInfo = SPECS[player.spec]
+    if not sInfo then return buffs end
+    
+    for _, b in ipairs(sInfo.buffs) do
+        table_insert(buffs, b)
+    end
+    
+    local function removeBuff(name)
+        for i = #buffs, 1, -1 do
+            if buffs[i] == name then table_remove(buffs, i) end
+        end
+    end
+    
+    if player.class == "Shaman" then
+        local totemsToRemove = {
+            "Windfury Totem", "Wrath of Air Totem", "Grace of Air Totem",
+            "Strength of Earth Totem", "Tremor Totem",
+            "Mana Spring Totem", "Healing Stream Totem"
+        }
+        for _, rem in ipairs(totemsToRemove) do removeBuff(rem) end
+        
+        if groupRole == "Melee" or groupRole == "DPS" then
+            table_insert(buffs, "Windfury Totem")
+            table_insert(buffs, "Strength of Earth Totem")
+            table_insert(buffs, "Mana Spring Totem")
+        elseif groupRole == "Casters" then
+            table_insert(buffs, "Wrath of Air Totem")
+            table_insert(buffs, "Mana Spring Totem")
+        elseif groupRole == "Healers" then
+            table_insert(buffs, "Wrath of Air Totem")
+            table_insert(buffs, "Mana Spring Totem")
+        elseif groupRole == "Tanks" then
+            table_insert(buffs, "Grace of Air Totem")
+            table_insert(buffs, "Tremor Totem")
+            table_insert(buffs, "Healing Stream Totem")
+        else
+            table_insert(buffs, "Windfury Totem")
+            table_insert(buffs, "Mana Spring Totem")
+        end
+    elseif player.class == "Paladin" then
+        if player.spec == "Holy" or player.spec == "Holy1" then
+            if groupRole == "Melee" or groupRole == "Tanks" then
+                removeBuff("Concentration Aura")
+            end
+        end
+    elseif player.class == "Warrior" then
+        if player.spec == "Arms" or player.spec == "Fury" then
+            if groupRole == "Casters" or groupRole == "Healers" then
+                removeBuff("Battle Shout")
+            end
+        end
+    elseif player.class == "Warlock" then
+        if groupRole ~= "Tanks" then
+            removeBuff("Blood Pact")
+        end
+    end
+    
+    return buffs
+end
+
 function Addon.Optimiser:RefreshGroupBuffs(groups)
     for g=1, 5 do
         local groupRole = "Mixed"
@@ -431,25 +492,20 @@ function Addon.Optimiser:RefreshGroupBuffs(groups)
         local isMeleeOrTank = (groupRole == "Melee" or groupRole == "Tanks")
         
         for _, p in ipairs(groups[g]) do
-            local sInfo = SPECS[p.spec]
-            if sInfo then
-                for _, buffName in ipairs(sInfo.buffs) do
-                    local skip = false
-                    if Addon.IGNORED_UI_BUFFS and Addon.IGNORED_UI_BUFFS[buffName] then
-                        skip = true
-                        if buffName == "Blood Pact" and groupRole == "Tanks" then
-                            skip = false
-                        end
-                    elseif isCasterOrHealer and Addon.PHYSICAL_BUFFS[buffName] then
-                        skip = true
-                    elseif isMeleeOrTank and Addon.SPELL_BUFFS[buffName] then
-                        skip = true
-                    end
-                    
-                    if not skip and not seenBuffs[buffName] then
-                        seenBuffs[buffName] = true
-                        table_insert(groups[g].buffs, buffName)
-                    end
+            local pBuffs = self:GetPlayerBuffs(p, groupRole)
+            for _, buffName in ipairs(pBuffs) do
+                local skip = false
+                if Addon.IGNORED_UI_BUFFS and Addon.IGNORED_UI_BUFFS[buffName] then
+                    skip = true
+                elseif isCasterOrHealer and Addon.PHYSICAL_BUFFS[buffName] then
+                    skip = true
+                elseif isMeleeOrTank and Addon.SPELL_BUFFS[buffName] then
+                    skip = true
+                end
+                
+                if not skip and not seenBuffs[buffName] then
+                    seenBuffs[buffName] = true
+                    table_insert(groups[g].buffs, buffName)
                 end
             end
         end
@@ -473,12 +529,11 @@ function Addon.Optimiser:AnalyzeBuffs(groups)
     
     local function hasRaidBuff(buffName)
         for g=1, 5 do
+            local gLabel = groups[g].label or "Mixed"
             for _, p in ipairs(groups[g]) do
-                local sInfo = SPECS[p.spec]
-                if sInfo then
-                    for _, b in ipairs(sInfo.buffs) do
-                        if b == buffName then return true end
-                    end
+                local pBuffs = Addon.Optimiser:GetPlayerBuffs(p, gLabel)
+                for _, b in ipairs(pBuffs) do
+                    if b == buffName then return true end
                 end
             end
         end
@@ -505,12 +560,11 @@ function Addon.Optimiser:AnalyzeBuffs(groups)
     end
 
     local function checkGroupBuff(gIndex, buffName)
+        local gLabel = groups[gIndex].label or "Mixed"
         for _, p in ipairs(groups[gIndex]) do
-            local specInfo = SPECS[p.spec]
-            if specInfo then
-                for _, b in ipairs(specInfo.buffs) do
-                    if b == buffName then return true end
-                end
+            local pBuffs = Addon.Optimiser:GetPlayerBuffs(p, gLabel)
+            for _, b in ipairs(pBuffs) do
+                if b == buffName then return true end
             end
         end
         return false

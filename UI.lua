@@ -507,16 +507,18 @@ function Addon.UI:RenderGroups(groups, activeBuffsList)
         for pIndex=1, 5 do
             local pf = gf.players[pIndex]
             local player = group[pIndex]
-            if player then
+                if player then
                 local colorCode = CLASS_COLORS[player.class] or "|cFFFFFFFF"
                 local displaySpec = string.gsub(player.spec, "%d+$", "")
                 pf.text:SetText(colorCode .. player.name .. "|r\n|cFF999999" .. displaySpec .. " " .. player.class .. "|r")
                 pf:SetAlpha(1)
                 
                 -- Render Icons
-                local specInfo = Addon.SPECS and Addon.SPECS[player.spec]
-                if specInfo and specInfo.buffs then
-                    for i, buffName in ipairs(specInfo.buffs) do
+                local p = group[pIndex]
+                if p then
+                    local pBuffs = Addon.Optimiser:GetPlayerBuffs(p, group.label)
+                    
+                    for i, buffName in ipairs(pBuffs) do
                         local iconFrame = gf.playerIcons[pIndex][i]
                         if iconFrame then
                             local resolvedBuffName = buffName
