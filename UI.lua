@@ -138,47 +138,69 @@ function Addon.UI:CreateMainFrame()
         Addon.UI.ImportFrame:Show()
     end)
     
-    -- Faction Toggle
+    -- Faction Toggle (Sleek Modern Design)
     local factionFrame = CreateFrame("Frame", nil, f)
-    factionFrame:SetSize(120, 30)
+    factionFrame:SetSize(80, 34)
     factionFrame:SetPoint("LEFT", importBtn, "RIGHT", 40, 0)
-    factionFrame:SetScale(1.5)
+    factionFrame:SetScale(1.3)
     
-    local allianceBtn = CreateFrame("CheckButton", nil, factionFrame, "UIRadioButtonTemplate")
+    local allianceBtn = CreateFrame("Button", nil, factionFrame, "BackdropTemplate")
+    allianceBtn:SetSize(34, 34)
     allianceBtn:SetPoint("LEFT", 0, 0)
-    local allianceTex = allianceBtn:CreateTexture(nil, "OVERLAY")
-    allianceTex:SetSize(24, 24)
-    allianceTex:SetPoint("LEFT", allianceBtn, "RIGHT", 2, 0)
-    allianceTex:SetTexture("Interface\\TargetingFrame\\UI-PVP-Alliance")
-    allianceBtn:SetChecked(true)
+    allianceBtn:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1 })
     
-    local hordeBtn = CreateFrame("CheckButton", nil, factionFrame, "UIRadioButtonTemplate")
-    hordeBtn:SetPoint("LEFT", allianceTex, "RIGHT", 10, 0)
-    local hordeTex = hordeBtn:CreateTexture(nil, "OVERLAY")
-    hordeTex:SetSize(24, 24)
-    hordeTex:SetPoint("LEFT", hordeBtn, "RIGHT", 2, 0)
+    local allianceTex = allianceBtn:CreateTexture(nil, "ARTWORK")
+    allianceTex:SetSize(22, 22)
+    allianceTex:SetPoint("CENTER", 0, 0)
+    allianceTex:SetTexture("Interface\\TargetingFrame\\UI-PVP-Alliance")
+    
+    local hordeBtn = CreateFrame("Button", nil, factionFrame, "BackdropTemplate")
+    hordeBtn:SetSize(34, 34)
+    hordeBtn:SetPoint("LEFT", allianceBtn, "RIGHT", 8, 0)
+    hordeBtn:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1 })
+    
+    local hordeTex = hordeBtn:CreateTexture(nil, "ARTWORK")
+    hordeTex:SetSize(22, 22)
+    hordeTex:SetPoint("CENTER", 0, 0)
     hordeTex:SetTexture("Interface\\TargetingFrame\\UI-PVP-Horde")
-    hordeBtn:SetChecked(false)
+    
+    local function SetFactionVisuals(faction)
+        if faction == "Alliance" then
+            allianceBtn:SetBackdropColor(0.15, 0.3, 0.6, 1)
+            allianceBtn:SetBackdropBorderColor(0.4, 0.7, 1, 1)
+            allianceTex:SetDesaturated(false)
+            allianceTex:SetAlpha(1)
+            
+            hordeBtn:SetBackdropColor(0.1, 0.1, 0.1, 1)
+            hordeBtn:SetBackdropBorderColor(0, 0, 0, 1)
+            hordeTex:SetDesaturated(true)
+            hordeTex:SetAlpha(0.4)
+        else
+            hordeBtn:SetBackdropColor(0.5, 0.1, 0.1, 1)
+            hordeBtn:SetBackdropBorderColor(1, 0.3, 0.3, 1)
+            hordeTex:SetDesaturated(false)
+            hordeTex:SetAlpha(1)
+            
+            allianceBtn:SetBackdropColor(0.1, 0.1, 0.1, 1)
+            allianceBtn:SetBackdropBorderColor(0, 0, 0, 1)
+            allianceTex:SetDesaturated(true)
+            allianceTex:SetAlpha(0.4)
+        end
+    end
+    
+    SetFactionVisuals("Alliance")
     
     local function UpdateFaction(faction)
         Addon.Faction = faction
+        SetFactionVisuals(faction)
         if Addon.Core and Addon.Core.CurrentGroups then
             local buffs = Addon.Optimiser:AnalyzeBuffs(Addon.Core.CurrentGroups)
             Addon.UI:RenderGroups(Addon.Core.CurrentGroups, buffs)
         end
     end
     
-    allianceBtn:SetScript("OnClick", function(self)
-        self:SetChecked(true)
-        hordeBtn:SetChecked(false)
-        UpdateFaction("Alliance")
-    end)
-    
-    hordeBtn:SetScript("OnClick", function(self)
-        self:SetChecked(true)
-        allianceBtn:SetChecked(false)
-        UpdateFaction("Horde")
-    end)
+    allianceBtn:SetScript("OnClick", function() UpdateFaction("Alliance") end)
+    hordeBtn:SetScript("OnClick", function() UpdateFaction("Horde") end)
     
     -- Groups Grid Container
     local groupsContainer = CreateFrame("Frame", nil, f)
