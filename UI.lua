@@ -508,10 +508,11 @@ function Addon.UI:RenderGroups(groups, activeBuffsList)
         else
             for i=1, 24 do gf.groupIcons[i]:Hide() end
         end
+        local recIndex = 1
         for pIndex=1, 5 do
             local pf = gf.players[pIndex]
             local player = group[pIndex]
-                if player then
+            if player then
                 local colorCode = CLASS_COLORS[player.class] or "|cFFFFFFFF"
                 local displaySpec = string.gsub(player.spec, "%d+$", "")
                 pf.text:SetText(colorCode .. player.name .. "|r\n|cFF999999" .. displaySpec .. " " .. player.class .. "|r")
@@ -546,8 +547,15 @@ function Addon.UI:RenderGroups(groups, activeBuffsList)
                     if gf.playerIcons[pIndex][i] then gf.playerIcons[pIndex][i]:Hide() end
                 end
             else
-                pf.text:SetText("")
-                pf:SetAlpha(1)
+                local rec = group.recommendations and group.recommendations[recIndex]
+                if rec then
+                    pf.text:SetText("|cFF888888+ Rec: " .. rec .. "|r")
+                    pf:SetAlpha(0.6)
+                    recIndex = recIndex + 1
+                else
+                    pf.text:SetText("")
+                    pf:SetAlpha(1)
+                end
                 for i=1, 8 do gf.playerIcons[pIndex][i]:Hide() end
             end
         end
