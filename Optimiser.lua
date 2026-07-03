@@ -470,6 +470,17 @@ function Addon.Optimiser:GetPlayerBuffs(player, groupRole)
 end
 
 function Addon.Optimiser:RefreshGroupBuffs(groups)
+    local globalTanks = 0
+    local globalHealers = 0
+    
+    for g=1, 5 do
+        for _, p in ipairs(groups[g]) do
+            local role = self:GetPlayerRole(p.spec)
+            if role == "Tank" then globalTanks = globalTanks + 1
+            elseif role == "Healer" then globalHealers = globalHealers + 1 end
+        end
+    end
+    
     for g=1, 5 do
         local groupRole = "Mixed"
         local counts = { Tank=0, Healer=0, Melee=0, Ranged=0 }
@@ -502,27 +513,47 @@ function Addon.Optimiser:RefreshGroupBuffs(groups)
             end
             
             local recs = groups[g].recommendations
+            
+            local function addRec(rec, isTank, isHealer)
+                if #recs >= missingSlots then return end
+                if isTank then globalTanks = globalTanks + 1 end
+                if isHealer then
+                    if globalHealers >= 6 then
+                        table_insert(recs, "Flex DPS")
+                        return
+                    end
+                    globalHealers = globalHealers + 1
+                end
+                table_insert(recs, rec)
+            end
+            
+            if g == 1 then
+                while globalTanks < 3 and #recs < missingSlots do
+                    addRec("Protection Warrior", true, false)
+                end
+            end
+            
             if groupRole == "Tanks" then
-                if not hasClass("Warlock") then table_insert(recs, "Destruction Warlock") end
-                if not hasSpec("Restoration") then table_insert(recs, "Restoration Druid") end
-                if not hasClass("Paladin") then table_insert(recs, "Holy Paladin") end
-                while #recs < missingSlots do table_insert(recs, "Restoration Shaman") end
+                if not hasClass("Warlock") then addRec("Destruction Warlock", false, false) end
+                if not hasSpec("Restoration") then addRec("Restoration Druid", false, true) end
+                if not hasClass("Paladin") then addRec("Holy Paladin", false, true) end
+                while #recs < missingSlots do addRec("Restoration Shaman", false, true) end
             elseif groupRole == "Melee" or groupRole == "DPS" then
-                if not hasSpec("Enhancement") then table_insert(recs, "Enhancement Shaman") end
-                if not hasSpec("Feral") then table_insert(recs, "Feral Druid") end
-                if not hasSpec("Retribution") then table_insert(recs, "Retribution Paladin") end
-                while #recs < missingSlots do table_insert(recs, "Fury Warrior") end
+                if not hasSpec("Enhancement") then addRec("Enhancement Shaman", false, false) end
+                if not hasSpec("Feral") then addRec("Feral Druid", false, false) end
+                if not hasSpec("Retribution") then addRec("Retribution Paladin", false, false) end
+                while #recs < missingSlots do addRec("Fury Warrior", false, false) end
             elseif groupRole == "Casters" then
-                if not hasSpec("Elemental") then table_insert(recs, "Elemental Shaman") end
-                if not hasSpec("Shadow") then table_insert(recs, "Shadow Priest") end
-                if not hasSpec("Balance") then table_insert(recs, "Balance Druid") end
-                while #recs < missingSlots do table_insert(recs, "Destruction Warlock") end
+                if not hasSpec("Elemental") then addRec("Elemental Shaman", false, false) end
+                if not hasSpec("Shadow") then addRec("Shadow Priest", false, false) end
+                if not hasSpec("Balance") then addRec("Balance Druid", false, false) end
+                while #recs < missingSlots do addRec("Destruction Warlock", false, false) end
             elseif groupRole == "Healers" then
-                if not hasSpec("Restoration") and not hasClass("Shaman") then table_insert(recs, "Restoration Shaman") end
-                if not hasSpec("Shadow") then table_insert(recs, "Shadow Priest") end
-                while #recs < missingSlots do table_insert(recs, "Holy Paladin") end
+                if not hasSpec("Restoration") and not hasClass("Shaman") then addRec("Restoration Shaman", false, true) end
+                if not hasSpec("Shadow") then addRec("Shadow Priest", false, false) end
+                while #recs < missingSlots do addRec("Holy Paladin", false, true) end
             else
-                while #recs < missingSlots do table_insert(recs, "Flex DPS") end
+                while #recs < missingSlots do addRec("Flex DPS", false, false) end
             end
             -- Trim excess recommendations to exactly match empty slots
             while #recs > missingSlots do table_remove(recs) end
