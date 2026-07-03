@@ -472,12 +472,19 @@ end
 function Addon.Optimiser:RefreshGroupBuffs(groups)
     local globalTanks = 0
     local globalHealers = 0
+    local classCounts = {}
+    local specCounts = {}
     
     for g=1, 5 do
         for _, p in ipairs(groups[g]) do
             local role = self:GetPlayerRole(p.spec)
             if role == "Tank" then globalTanks = globalTanks + 1
             elseif role == "Healer" then globalHealers = globalHealers + 1 end
+            
+            classCounts[p.class] = (classCounts[p.class] or 0) + 1
+            specCounts[p.spec] = (specCounts[p.spec] or 0) + 1
+            if p.spec == "Restoration1" then specCounts["Restoration"] = (specCounts["Restoration"] or 0) + 1 end
+            if p.spec == "Holy1" then specCounts["Holy"] = (specCounts["Holy"] or 0) + 1 end
         end
     end
     
@@ -514,16 +521,47 @@ function Addon.Optimiser:RefreshGroupBuffs(groups)
             
             local recs = groups[g].recommendations
             
+            local function getDynamicDPSRecommendation(rolePref)
+                if (classCounts["Paladin"] or 0) < 3 then return "Retribution Paladin" end
+                if (classCounts["Shaman"] or 0) < 5 then return "Elemental Shaman" end
+                if (classCounts["Mage"] or 0) < 1 then return "Arcane Mage" end
+                if (classCounts["Priest"] or 0) < 1 then return "Shadow Priest" end
+                if (classCounts["Druid"] or 0) < 1 then return "Balance Druid" end
+                if (classCounts["Warlock"] or 0) < 1 then return "Destruction Warlock" end
+                if (specCounts["Arms"] or 0) < 1 then return "Arms Warrior" end
+                if (specCounts["Survival"] or 0) < 1 then return "Survival Hunter" end
+                if (specCounts["Fire"] or 0) < 1 then return "Fire Mage" end
+                if (specCounts["Discipline"] or 0) < 1 then return "Discipline Priest" end
+                
+                if rolePref == "Melee" then return "Fury Warrior"
+                elseif rolePref == "Casters" then return "Destruction Warlock"
+                else return "Destruction Warlock" end
+            end
+            
             local function addRec(rec, isTank, isHealer)
                 if #recs >= missingSlots then return end
+                
+                if rec == "DynamicDPS" or rec == "DynamicMelee" or rec == "DynamicCaster" then
+                    local pref = "Ranged"
+                    if rec == "DynamicMelee" then pref = "Melee" elseif rec == "DynamicCaster" then pref = "Casters" end
+                    rec = getDynamicDPSRecommendation(pref)
+                end
+                
                 if isTank then globalTanks = globalTanks + 1 end
                 if isHealer then
                     if globalHealers >= 6 then
-                        table_insert(recs, "Flex DPS")
-                        return
+                        rec = getDynamicDPSRecommendation("Casters")
+                    else
+                        globalHealers = globalHealers + 1
                     end
-                    globalHealers = globalHealers + 1
                 end
+                
+                local rSpec, rClass = rec:match("^(%S+)%s+(.*)$")
+                if rClass then
+                    classCounts[rClass] = (classCounts[rClass] or 0) + 1
+                    specCounts[rSpec] = (specCounts[rSpec] or 0) + 1
+                end
+                
                 table_insert(recs, rec)
             end
             
@@ -542,18 +580,18 @@ function Addon.Optimiser:RefreshGroupBuffs(groups)
                 if not hasSpec("Enhancement") then addRec("Enhancement Shaman", false, false) end
                 if not hasSpec("Feral") then addRec("Feral Druid", false, false) end
                 if not hasSpec("Retribution") then addRec("Retribution Paladin", false, false) end
-                while #recs < missingSlots do addRec("Fury Warrior", false, false) end
+                while #recs < missingSlots do addRec("DynamicMelee", false, false) end
             elseif groupRole == "Casters" then
                 if not hasSpec("Elemental") then addRec("Elemental Shaman", false, false) end
                 if not hasSpec("Shadow") then addRec("Shadow Priest", false, false) end
                 if not hasSpec("Balance") then addRec("Balance Druid", false, false) end
-                while #recs < missingSlots do addRec("Destruction Warlock", false, false) end
+                while #recs < missingSlots do addRec("DynamicCaster", false, false) end
             elseif groupRole == "Healers" then
                 if not hasSpec("Restoration") and not hasClass("Shaman") then addRec("Restoration Shaman", false, true) end
                 if not hasSpec("Shadow") then addRec("Shadow Priest", false, false) end
                 while #recs < missingSlots do addRec("Holy Paladin", false, true) end
             else
-                while #recs < missingSlots do addRec("Flex DPS", false, false) end
+                while #recs < missingSlots do addRec("DynamicDPS", false, false) end
             end
             -- Trim excess recommendations to exactly match empty slots
             while #recs > missingSlots do table_remove(recs) end
