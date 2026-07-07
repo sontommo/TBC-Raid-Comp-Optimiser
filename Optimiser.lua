@@ -203,204 +203,162 @@ function Addon.Optimiser:Optimise(players)
     local groups = {{}, {}, {}, {}, {}}
     local function getFree(g) return 5 - #groups[g] end
     local function addToGroup(p, g)
-        if getFree(g) > 0 then
+        if p and getFree(g) > 0 then
             table_insert(groups[g], p)
             return true
         end
         return false
     end
 
-    local shamans = {}
-    local tanks = {}
-    local healers = {}
-    local melee = {}
-    local ranged = {}
+    -- 1. Micro-role Categorisation
+    local roles = {
+        tanks = {},
+        enhanceShamans = {},
+        eleShamans = {},
+        restoShamans = {},
+        shadowPriests = {},
+        boomkins = {},
+        feralDPS = {},
+        retPaladins = {},
+        hunters = {},
+        warriors = {},
+        rogues = {},
+        arcaneMages = {},
+        warlocks = {},
+        otherCasters = {},
+        restoDruids = {},
+        otherHealers = {}
+    }
     
     for _, p in ipairs(players) do
-        if p.class == "Shaman" then
-            table_insert(shamans, p)
-        else
-            local role = self:GetPlayerRole(p.spec)
-            if role == "Tank" or p.spec:match("Protection") or p.spec == "Guardian" then
-                table_insert(tanks, p)
-            elseif role == "Healer" or p.spec:match("Restoration") or p.spec:match("Holy") or p.spec == "Discipline" then
-                table_insert(healers, p)
-            elseif role == "Melee" then
-                table_insert(melee, p)
-            else
-                table_insert(ranged, p)
+        local r = self:GetPlayerRole(p.spec)
+        local s = p.spec
+        local c = p.class
+        
+        if r == "Tank" or s:match("Protection") or s == "Guardian" then table_insert(roles.tanks, p)
+        elseif s == "Enhancement" then table_insert(roles.enhanceShamans, p)
+        elseif s == "Elemental" then table_insert(roles.eleShamans, p)
+        elseif s == "Restoration" and c == "Shaman" or s == "Restoration1" and c == "Shaman" then table_insert(roles.restoShamans, p)
+        elseif s == "Shadow" then table_insert(roles.shadowPriests, p)
+        elseif s == "Balance" then table_insert(roles.boomkins, p)
+        elseif s == "Feral" then table_insert(roles.feralDPS, p)
+        elseif s == "Retribution" then table_insert(roles.retPaladins, p)
+        elseif c == "Hunter" then table_insert(roles.hunters, p)
+        elseif c == "Warrior" then table_insert(roles.warriors, p)
+        elseif c == "Rogue" then table_insert(roles.rogues, p)
+        elseif s == "Arcane" then table_insert(roles.arcaneMages, p)
+        elseif c == "Warlock" then table_insert(roles.warlocks, p)
+        elseif r == "Ranged" or c == "Mage" then table_insert(roles.otherCasters, p)
+        elseif s == "Restoration" and c == "Druid" or s == "Restoration1" and c == "Druid" then table_insert(roles.restoDruids, p)
+        else table_insert(roles.otherHealers, p) end
+    end
+    
+    local function place(list, prefs)
+        for i = #list, 1, -1 do
+            local placed = false
+            for _, g in ipairs(prefs) do
+                if addToGroup(list[i], g) then
+                    table_remove(list, i)
+                    placed = true
+                    break
+                end
             end
         end
     end
     
-    -- Shaman Priority Matrix
-    local shamanAssignments = {nil, nil, nil, nil, nil}
-    local function assignShaman(groupIndex, preferredSpecs)
-        if shamanAssignments[groupIndex] then return end
-        for i, s in ipairs(shamans) do
-            for _, spec in ipairs(preferredSpecs) do
-                if s.spec == spec or (spec == "Restoration" and s.spec == "Restoration1") then
-                    shamanAssignments[groupIndex] = s
-                    table_remove(shamans, i)
+    local function pullOne(list, prefs)
+        for i = #list, 1, -1 do
+            for _, g in ipairs(prefs) do
+                if addToGroup(list[i], g) then
+                    table_remove(list, i)
                     return true
                 end
             end
         end
         return false
     end
-    
-    assignShaman(2, {"Enhancement"})
-    assignShaman(3, {"Enhancement"})
-    assignShaman(4, {"Elemental"})
-    assignShaman(5, {"Restoration", "Restoration1"})
-    assignShaman(1, {"Restoration", "Restoration1", "Enhancement", "Elemental"})
-    
-    for g=1, 5 do
-        if not shamanAssignments[g] and #shamans > 0 then
-            shamanAssignments[g] = table_remove(shamans, 1)
-        end
-    end
-    
-    for g=1, 5 do
-        if shamanAssignments[g] then
-            addToGroup(shamanAssignments[g], g)
-        end
-    end
-    
-    for _, s in ipairs(shamans) do
-        if s.spec == "Enhancement" then
-            if getFree(2) > 0 then addToGroup(s, 2)
-            elseif getFree(3) > 0 then addToGroup(s, 3)
-            else addToGroup(s, 1) end
-        elseif s.spec == "Elemental" then
-            if getFree(4) > 0 then addToGroup(s, 4)
-            else addToGroup(s, 5) end
-        else
-            if getFree(5) > 0 then addToGroup(s, 5)
-            else addToGroup(s, 1) end
-        end
-    end
 
-    -- G1: Tanks
-    for _, p in ipairs(tanks) do addToGroup(p, 1) end
-    
-    -- Warlock for Blood Pact in Tank Group
-    for i = #ranged, 1, -1 do
-        if getFree(1) > 0 and ranged[i].class == "Warlock" then
-            addToGroup(ranged[i], 1)
-            table_remove(ranged, i)
-            break
+    -- Phase 1: The Core (Tanks & Warlock Blood Pact)
+    for i = #roles.tanks, 1, -1 do
+        local p = roles.tanks[i]
+        local placed = false
+        if p.spec == "Guardian" or (p.spec == "Feral" and self:GetPlayerRole(p.spec) == "Tank") then
+            local hasBear = false
+            for _, m in ipairs(groups[1]) do if m.spec == "Guardian" or (m.spec == "Feral" and self:GetPlayerRole(m.spec) == "Tank") then hasBear = true break end end
+            if hasBear then placed = addToGroup(p, 3) or addToGroup(p, 2) end
         end
-    end
-    
-    -- Restoration Druid for Tanks (Tree of Life)
-    local foundRestoDruidForTanks = false
-    for i = #healers, 1, -1 do
-        if getFree(1) > 0 and healers[i].class == "Druid" and (healers[i].spec:match("Restoration") or healers[i].spec == "Restoration1") then
-            addToGroup(healers[i], 1)
-            table_remove(healers, i)
-            foundRestoDruidForTanks = true
-            break
-        end
-    end
-    -- Fallback to Holy Paladin if no Resto Druid available for tank group
-    if not foundRestoDruidForTanks then
-        for i = #healers, 1, -1 do
-            if getFree(1) > 0 and healers[i].class == "Paladin" then
-                addToGroup(healers[i], 1)
-                table_remove(healers, i)
-                break
-            end
-        end
-    end
-
-    -- Extract Hunters to group them tightly in G3
-    local hunters = {}
-    for i = #ranged, 1, -1 do
-        if ranged[i].class == "Hunter" then
-            table_insert(hunters, ranged[i])
-            table_remove(ranged, i)
-        end
-    end
-
-    -- G3: Hunters & Feral Synergy
-    -- Find one Feral Druid for the hunters if possible
-    for i = #melee, 1, -1 do
-        if getFree(3) > 0 and melee[i].spec == "Feral" and #hunters > 0 then
-            addToGroup(melee[i], 3)
-            table_remove(melee, i)
-            break
-        end
+        if not placed then placed = addToGroup(p, 1) or addToGroup(p, 2) end
+        if placed then table_remove(roles.tanks, i) end
     end
     
-    -- Add hunters to G3 (spill to G2 or G4 if full)
-    for _, h in ipairs(hunters) do
-        if getFree(3) > 0 then addToGroup(h, 3)
-        elseif getFree(2) > 0 then addToGroup(h, 2)
-        elseif getFree(4) > 0 then addToGroup(h, 4)
-        else addToGroup(h, 5) end
-    end
-
-    -- G2: Melee (Feral, Ret, Rogues, Warriors)
-    local function placeMeleeSupport(specName)
-        for i = #melee, 1, -1 do
-            if melee[i].spec == specName then
-                if getFree(2) > 0 then addToGroup(melee[i], 2)
-                elseif getFree(3) > 0 then addToGroup(melee[i], 3) end
-                table_remove(melee, i)
-            end
-        end
-    end
-    -- Any remaining Feral Druids go to melee
-    placeMeleeSupport("Feral")
-    -- Ret Paladins go to melee
-    placeMeleeSupport("Retribution")
+    pullOne(roles.warlocks, {1})
+    pullOne(roles.restoDruids, {1})
     
-    for i = #melee, 1, -1 do
-        if getFree(2) > 0 then addToGroup(melee[i], 2)
-        elseif getFree(3) > 0 then addToGroup(melee[i], 3)
-        elseif getFree(4) > 0 then addToGroup(melee[i], 4)
-        elseif getFree(1) > 0 then addToGroup(melee[i], 1) end
+    -- Phase 2: The Shamans
+    for i = #roles.enhanceShamans, 1, -1 do
+        local p = roles.enhanceShamans[i]
+        local placed = addToGroup(p, 2) or addToGroup(p, 3) or addToGroup(p, 1) or addToGroup(p, 2) or addToGroup(p, 3)
+        if placed then table_remove(roles.enhanceShamans, i) end
     end
-
-    -- G5: Healers
-    for i = #healers, 1, -1 do
-        if getFree(5) > 0 then addToGroup(healers[i], 5)
-        elseif getFree(4) > 0 then addToGroup(healers[i], 4)
-        elseif getFree(3) > 0 then addToGroup(healers[i], 3) end
+    for i = #roles.eleShamans, 1, -1 do
+        local p = roles.eleShamans[i]
+        local placed = addToGroup(p, 4) or addToGroup(p, 5) or addToGroup(p, 4)
+        if placed then table_remove(roles.eleShamans, i) end
     end
-
-    -- G4: Casters & Ranged (Shadow Priest, Boomkin, Mages, Warlocks)
-    local function groupHasSpec(gIndex, specName)
-        for _, p in ipairs(groups[gIndex]) do
-            if p.spec == specName then return true end
-        end
-        return false
+    for i = #roles.restoShamans, 1, -1 do
+        local p = roles.restoShamans[i]
+        local g1NeedsShaman = true
+        for _, m in ipairs(groups[1]) do if m.class == "Shaman" then g1NeedsShaman = false break end end
+        local placed = false
+        if g1NeedsShaman then placed = addToGroup(p, 1) end
+        if not placed then placed = addToGroup(p, 5) or addToGroup(p, 4) end
+        if placed then table_remove(roles.restoShamans, i) end
     end
-
-    local function placeRangedSupport(specName)
-        for i = #ranged, 1, -1 do
-            if ranged[i].spec == specName then
-                if getFree(4) > 0 and not groupHasSpec(4, specName) then addToGroup(ranged[i], 4)
-                elseif getFree(5) > 0 and not groupHasSpec(5, specName) then addToGroup(ranged[i], 5)
-                elseif getFree(3) > 0 and not groupHasSpec(3, specName) then addToGroup(ranged[i], 3)
-                elseif getFree(4) > 0 then addToGroup(ranged[i], 4)
-                elseif getFree(5) > 0 then addToGroup(ranged[i], 5)
-                elseif getFree(3) > 0 then addToGroup(ranged[i], 3) end
-                table_remove(ranged, i)
-            end
-        end
-    end
-    placeRangedSupport("Balance")
-    placeRangedSupport("Shadow")
     
-    for i = #ranged, 1, -1 do
-        if getFree(4) > 0 then addToGroup(ranged[i], 4)
-        elseif getFree(5) > 0 then addToGroup(ranged[i], 5)
-        elseif getFree(3) > 0 then addToGroup(ranged[i], 3)
-        elseif getFree(2) > 0 then addToGroup(ranged[i], 2)
-        elseif getFree(1) > 0 then addToGroup(ranged[i], 1) end
+    -- Phase 3: The Mana Batteries (Shadow / Boomkin)
+    for i = #roles.shadowPriests, 1, -1 do
+        local p = roles.shadowPriests[i]
+        local placed = addToGroup(p, 4) or addToGroup(p, 5) or addToGroup(p, 4)
+        if placed then table_remove(roles.shadowPriests, i) end
     end
+    for i = #roles.boomkins, 1, -1 do
+        local p = roles.boomkins[i]
+        local placed = addToGroup(p, 4) or addToGroup(p, 5) or addToGroup(p, 4)
+        if placed then table_remove(roles.boomkins, i) end
+    end
+    
+    -- Phase 4: Melee Supports (Feral / Ret)
+    for i = #roles.feralDPS, 1, -1 do
+        local p = roles.feralDPS[i]
+        local placed = addToGroup(p, 3) or addToGroup(p, 2)
+        if placed then table_remove(roles.feralDPS, i) end
+    end
+    for i = #roles.retPaladins, 1, -1 do
+        local p = roles.retPaladins[i]
+        local placed = addToGroup(p, 2) or addToGroup(p, 3)
+        if placed then table_remove(roles.retPaladins, i) end
+    end
+    
+    -- Phase 5: Physical Pumpers (Hunters, Warriors, Rogues)
+    place(roles.hunters, {3, 2, 4})
+    pullOne(roles.warriors, {3}) -- One warrior for Battle Shout
+    place(roles.warriors, {2, 3})
+    place(roles.rogues, {2, 3})
+    
+    -- Phase 6: Caster Pumpers (Arcane Mages, Warlocks)
+    place(roles.arcaneMages, {4, 5})
+    place(roles.warlocks, {5, 4})
+    place(roles.otherCasters, {4, 5, 3})
+    
+    -- Phase 7: Healers
+    place(roles.restoDruids, {5, 4, 1})
+    place(roles.otherHealers, {5, 4, 1, 3, 2})
+    
+    -- Phase 8: Spillover Catch-All
+    local function catchAll(list)
+        place(list, {1, 2, 3, 4, 5})
+    end
+    for _, list in pairs(roles) do catchAll(list) end
 
     self:RefreshGroupBuffs(groups)
 
