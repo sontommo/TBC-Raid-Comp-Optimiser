@@ -12,21 +12,14 @@ To import your raid roster from Raid-Helper:
 4. Type `/raidcomp` in game.
 5. Copy and paste the full JSON string directly into the addon in-game.
 
-## How it Works
+## How it Works: The Meta Engine
 
-### The Shaman Rule
-Shamans are the backbone of any TBC raid. While Bloodlust and Heroism are raid-wide in the Anniversary Edition, totems are still party-wide. The addon pulls out all your Shamans first and distributes them perfectly:
-- **Melee (Groups 2 & 3):** Gets Enhancement Shamans for Windfury and Unleashed Rage.
-- **Casters (Group 4):** Gets an Elemental Shaman for Totem of Wrath and Wrath of Air.
-- **Healers (Group 5):** Gets a Restoration Shaman for Mana Tide.
-- **Tanks (Group 1):** Gets the remaining Shamans for Tremor, Grace of Air, and Healing Stream.
+The addon doesn't just blindly throw healers in one group and tanks in another. The engine is built around the exact strategies used by top-parsing guilds on Warcraft Logs to squeeze every ounce of damage out of a 25-man roster:
 
-### Sorting the Roster
-After the Shamans are sorted, it organises the rest of the team:
-- **Tanks (Group 1):** Protection Warriors, Protection Paladins, and Feral Bears go here. It also hunts down a Restoration Druid for the Tree of Life aura, and a Warlock for the Blood Pact stamina buff.
-- **Hunters (Group 3):** Hunters are grouped together to stack Ferocious Inspiration. It also drops a Feral Druid in here for Leader of the Pack to boost their crit.
-- **Melee (Group 2):** Feral Druids and Retribution Paladins are slotted in for their damage auras, followed by Fury/Arms Warriors and Rogues who can soak up Windfury.
-- **Casters & Healers (Groups 4 & 5):** Shadow Priests and Balance Druids are spread evenly across these groups to maximise Vampiric Touch mana regeneration and Moonkin Aura crit chance without overlapping.
+- **The Arcane Dream:** Arcane Mages do massive damage but burn through mana instantly. The engine builds a dedicated group just for them, guaranteeing they get paired with a Shadow Priest, a Resto Shaman, and an Elemental Shaman. It deliberately starves Warlocks of Shadow Priests until every Arcane Mage is fed.
+- **The Hunter Pump Group:** Beast Mastery Hunters are grouped together to stack *Ferocious Inspiration*. To push their damage to the limit, the engine drops a Feral Druid in for crit, an Enhancement Shaman for agility, and crucially, pulls exactly *one* Warrior into the group just to keep *Battle Shout* up on the pets.
+- **Tank Threat Scaling:** Rather than stacking the tank group with healers, the engine knows that threat is your biggest bottleneck. If you have a spare Enhancement Shaman, it drops them straight into the tank group so your Protection Warrior gets *Windfury Totem* and *Grace of Air*. 
+- **Decoupling Supports:** Auras like a Retribution Paladin's *Sanctity Aura* don't stack. If you bring two Ret Paladins, the engine actively stops them from overlapping. It puts one in the main melee group and spills the second into the Hunter group to make sure you aren't wasting buffs.
 
 ## The Live Buff Checklist
 You don't need to memorise any of this. The UI features a live, interactive checklist at the bottom of the window:
