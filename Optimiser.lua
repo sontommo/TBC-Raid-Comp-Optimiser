@@ -340,8 +340,8 @@ function Addon.Optimiser:Optimise(players)
     end
     
     -- Phase 5: Physical Pumpers (Hunters, Warriors, Rogues)
-    place(roles.hunters, {3, 2, 4})
     pullOne(roles.warriors, {3}) -- One warrior for Battle Shout
+    place(roles.hunters, {3, 2, 4})
     place(roles.warriors, {2, 3})
     place(roles.rogues, {2, 3})
     

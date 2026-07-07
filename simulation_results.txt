@@ -1,0 +1,342 @@
+Top 10 High-Synergy 'Quirky' Raid Compositions:
+
+--- Comp #1 | Synergy Score: 3680 ---
+Roster Summary: 2x Feral Druid, 2x Protection Warrior, 2x Restoration Shaman, 2x Holy Priest, 2x Survival Hunter, 2x Balance Druid, 2x Arcane Mage, 1x Holy Paladin, 1x Discipline Priest, 1x Retribution Paladin, 1x Beast Mastery Hunter, 1x Fury Warrior, 1x Arms Warrior, 1x Elemental Shaman, 1x Shadow Priest, 1x Assassination Rogue, 1x Enhancement Shaman, 1x Combat Rogue
+
+  Group 1:
+    - Protection Warrior
+    - Protection Warrior
+    - Feral Druid
+    - Restoration Shaman
+    - Holy Paladin
+  Group 2:
+    - Enhancement Shaman
+    - Retribution Paladin
+    - Fury Warrior
+    - Combat Rogue
+    - Assassination Rogue
+  Group 3:
+    - Feral Druid
+    - Beast Mastery Hunter
+    - Survival Hunter
+    - Survival Hunter
+    - Arms Warrior
+  Group 4:
+    - Elemental Shaman
+    - Shadow Priest
+    - Balance Druid
+    - Balance Druid
+    - Arcane Mage
+  Group 5:
+    - Restoration Shaman
+    - Arcane Mage
+    - Discipline Priest
+    - Holy Priest
+    - Holy Priest
+
+--- Comp #2 | Synergy Score: 3650 ---
+Roster Summary: 3x Holy Priest, 2x Restoration Shaman, 2x Marksmanship Hunter, 2x Arcane Mage, 2x Fury Warrior, 2x Balance Druid, 1x Protection Paladin, 1x Protection Warrior, 1x Feral Druid, 1x Discipline Priest, 1x Holy Paladin, 1x Survival Hunter, 1x Beast Mastery Hunter, 1x Assassination Rogue, 1x Shadow Priest, 1x Retribution Paladin, 1x Arms Warrior, 1x Enhancement Shaman
+
+  Group 1:
+    - Feral Druid
+    - Protection Warrior
+    - Protection Paladin
+    - Restoration Shaman
+    - Discipline Priest
+  Group 2:
+    - Enhancement Shaman
+    - Retribution Paladin
+    - Fury Warrior
+    - Arms Warrior
+    - Assassination Rogue
+  Group 3:
+    - Marksmanship Hunter
+    - Marksmanship Hunter
+    - Beast Mastery Hunter
+    - Survival Hunter
+    - Fury Warrior
+  Group 4:
+    - Shadow Priest
+    - Balance Druid
+    - Balance Druid
+    - Arcane Mage
+    - Arcane Mage
+  Group 5:
+    - Restoration Shaman
+    - Holy Priest
+    - Holy Priest
+    - Holy Priest
+    - Holy Paladin
+
+--- Comp #3 | Synergy Score: 3630 ---
+Roster Summary: 2x Protection Warrior, 2x Feral Druid, 2x Discipline Priest, 2x Fury Warrior, 2x Enhancement Shaman, 2x Arcane Mage, 2x Survival Hunter, 1x Restoration Druid, 1x Restoration Shaman, 1x Holy Priest, 1x Combat Rogue, 1x Retribution Paladin, 1x Beast Mastery Hunter, 1x Elemental Shaman, 1x Shadow Priest, 1x Balance Druid, 1x Subtlety Rogue, 1x Demonology Warlock
+
+  Group 1:
+    - Feral Druid
+    - Protection Warrior
+    - Protection Warrior
+    - Demonology Warlock
+    - Restoration Druid
+  Group 2:
+    - Enhancement Shaman
+    - Enhancement Shaman
+    - Retribution Paladin
+    - Fury Warrior
+    - Subtlety Rogue
+  Group 3:
+    - Feral Druid
+    - Survival Hunter
+    - Survival Hunter
+    - Beast Mastery Hunter
+    - Fury Warrior
+  Group 4:
+    - Elemental Shaman
+    - Shadow Priest
+    - Balance Druid
+    - Arcane Mage
+    - Arcane Mage
+  Group 5:
+    - Restoration Shaman
+    - Holy Priest
+    - Discipline Priest
+    - Discipline Priest
+    - Combat Rogue
+
+--- Comp #4 | Synergy Score: 3600 ---
+Roster Summary: 3x Restoration Shaman, 2x Protection Warrior, 2x Retribution Paladin, 2x Arcane Mage, 2x Arms Warrior, 2x Survival Hunter, 1x Protection Paladin, 1x Discipline Priest, 1x Holy Priest, 1x Holy Paladin, 1x Marksmanship Hunter, 1x Shadow Priest, 1x Beast Mastery Hunter, 1x Frost Mage, 1x Balance Druid, 1x Assassination Rogue, 1x Combat Rogue, 1x Enhancement Shaman
+
+  Group 1:
+    - Protection Warrior
+    - Protection Warrior
+    - Protection Paladin
+    - Restoration Shaman
+    - Assassination Rogue
+  Group 2:
+    - Enhancement Shaman
+    - Retribution Paladin
+    - Retribution Paladin
+    - Arms Warrior
+    - Combat Rogue
+  Group 3:
+    - Survival Hunter
+    - Survival Hunter
+    - Beast Mastery Hunter
+    - Marksmanship Hunter
+    - Arms Warrior
+  Group 4:
+    - Shadow Priest
+    - Balance Druid
+    - Arcane Mage
+    - Arcane Mage
+    - Frost Mage
+  Group 5:
+    - Restoration Shaman
+    - Restoration Shaman
+    - Holy Paladin
+    - Holy Priest
+    - Discipline Priest
+
+--- Comp #5 | Synergy Score: 3570 ---
+Roster Summary: 5x Survival Hunter, 3x Restoration Druid, 2x Discipline Priest, 2x Restoration Shaman, 2x Enhancement Shaman, 1x Feral Druid, 1x Protection Warrior, 1x Protection Paladin, 1x Shadow Priest, 1x Fury Warrior, 1x Subtlety Rogue, 1x Retribution Paladin, 1x Elemental Shaman, 1x Balance Druid, 1x Fire Mage, 1x Arcane Mage
+
+  Group 1:
+    - Protection Paladin
+    - Protection Warrior
+    - Feral Druid
+    - Restoration Druid
+    - Restoration Shaman
+  Group 2:
+    - Enhancement Shaman
+    - Enhancement Shaman
+    - Retribution Paladin
+    - Fury Warrior
+    - Subtlety Rogue
+  Group 3:
+    - Survival Hunter
+    - Survival Hunter
+    - Survival Hunter
+    - Survival Hunter
+    - Survival Hunter
+  Group 4:
+    - Elemental Shaman
+    - Shadow Priest
+    - Balance Druid
+    - Arcane Mage
+    - Fire Mage
+  Group 5:
+    - Restoration Shaman
+    - Restoration Druid
+    - Restoration Druid
+    - Discipline Priest
+    - Discipline Priest
+
+--- Comp #6 | Synergy Score: 3570 ---
+Roster Summary: 3x Protection Warrior, 2x Restoration Shaman, 2x Holy Priest, 2x Arcane Mage, 2x Beast Mastery Hunter, 2x Enhancement Shaman, 1x Feral Druid, 1x Discipline Priest, 1x Shadow Priest, 1x Marksmanship Hunter, 1x Survival Hunter, 1x Frost Mage, 1x Subtlety Rogue, 1x Retribution Paladin, 1x Elemental Shaman, 1x Assassination Rogue, 1x Balance Druid, 1x Arms Warrior
+
+  Group 1:
+    - Protection Warrior
+    - Protection Warrior
+    - Protection Warrior
+    - Feral Druid
+    - Restoration Shaman
+  Group 2:
+    - Enhancement Shaman
+    - Enhancement Shaman
+    - Retribution Paladin
+    - Assassination Rogue
+    - Subtlety Rogue
+  Group 3:
+    - Beast Mastery Hunter
+    - Beast Mastery Hunter
+    - Survival Hunter
+    - Marksmanship Hunter
+    - Arms Warrior
+  Group 4:
+    - Elemental Shaman
+    - Shadow Priest
+    - Balance Druid
+    - Arcane Mage
+    - Arcane Mage
+  Group 5:
+    - Restoration Shaman
+    - Frost Mage
+    - Holy Priest
+    - Holy Priest
+    - Discipline Priest
+
+--- Comp #7 | Synergy Score: 3530 ---
+Roster Summary: 3x Fury Warrior, 2x Feral Druid, 2x Restoration Shaman, 2x Beast Mastery Hunter, 2x Arcane Mage, 2x Retribution Paladin, 1x Protection Warrior, 1x Protection Paladin, 1x Restoration Druid, 1x Holy Paladin, 1x Holy Priest, 1x Destruction Warlock, 1x Enhancement Shaman, 1x Elemental Shaman, 1x Subtlety Rogue, 1x Marksmanship Hunter, 1x Shadow Priest, 1x Balance Druid
+
+  Group 1:
+    - Protection Paladin
+    - Feral Druid
+    - Protection Warrior
+    - Destruction Warlock
+    - Restoration Druid
+  Group 2:
+    - Enhancement Shaman
+    - Retribution Paladin
+    - Retribution Paladin
+    - Fury Warrior
+    - Fury Warrior
+  Group 3:
+    - Feral Druid
+    - Marksmanship Hunter
+    - Beast Mastery Hunter
+    - Beast Mastery Hunter
+    - Fury Warrior
+  Group 4:
+    - Elemental Shaman
+    - Shadow Priest
+    - Balance Druid
+    - Arcane Mage
+    - Arcane Mage
+  Group 5:
+    - Restoration Shaman
+    - Restoration Shaman
+    - Holy Priest
+    - Holy Paladin
+    - Subtlety Rogue
+
+--- Comp #8 | Synergy Score: 3520 ---
+Roster Summary: 3x Protection Warrior, 3x Restoration Druid, 2x Beast Mastery Hunter, 2x Enhancement Shaman, 1x Holy Priest, 1x Holy Paladin, 1x Restoration Shaman, 1x Fire Mage, 1x Shadow Priest, 1x Fury Warrior, 1x Balance Druid, 1x Arms Warrior, 1x Retribution Paladin, 1x Arcane Mage, 1x Marksmanship Hunter, 1x Survival Hunter, 1x Demonology Warlock, 1x Combat Rogue, 1x Elemental Shaman
+
+  Group 1:
+    - Protection Warrior
+    - Protection Warrior
+    - Protection Warrior
+    - Demonology Warlock
+    - Restoration Druid
+  Group 2:
+    - Enhancement Shaman
+    - Enhancement Shaman
+    - Retribution Paladin
+    - Fury Warrior
+    - Combat Rogue
+  Group 3:
+    - Beast Mastery Hunter
+    - Beast Mastery Hunter
+    - Survival Hunter
+    - Marksmanship Hunter
+    - Arms Warrior
+  Group 4:
+    - Elemental Shaman
+    - Shadow Priest
+    - Balance Druid
+    - Arcane Mage
+    - Fire Mage
+  Group 5:
+    - Restoration Shaman
+    - Restoration Druid
+    - Restoration Druid
+    - Holy Paladin
+    - Holy Priest
+
+--- Comp #9 | Synergy Score: 3480 ---
+Roster Summary: 3x Fury Warrior, 2x Feral Druid, 2x Restoration Shaman, 2x Holy Paladin, 2x Beast Mastery Hunter, 1x Protection Warrior, 1x Holy Priest, 1x Discipline Priest, 1x Frost Mage, 1x Elemental Shaman, 1x Combat Rogue, 1x Retribution Paladin, 1x Balance Druid, 1x Survival Hunter, 1x Shadow Priest, 1x Fire Mage, 1x Destruction Warlock, 1x Arcane Mage, 1x Enhancement Shaman
+
+  Group 1:
+    - Feral Druid
+    - Protection Warrior
+    - Destruction Warlock
+    - Restoration Shaman
+    - Holy Priest
+  Group 2:
+    - Enhancement Shaman
+    - Retribution Paladin
+    - Fury Warrior
+    - Fury Warrior
+    - Combat Rogue
+  Group 3:
+    - Feral Druid
+    - Survival Hunter
+    - Beast Mastery Hunter
+    - Beast Mastery Hunter
+    - Fury Warrior
+  Group 4:
+    - Elemental Shaman
+    - Shadow Priest
+    - Balance Druid
+    - Arcane Mage
+    - Fire Mage
+  Group 5:
+    - Restoration Shaman
+    - Frost Mage
+    - Discipline Priest
+    - Holy Paladin
+    - Holy Paladin
+
+--- Comp #10 | Synergy Score: 3480 ---
+Roster Summary: 3x Restoration Shaman, 3x Fury Warrior, 2x Feral Druid, 2x Protection Warrior, 2x Survival Hunter, 1x Discipline Priest, 1x Holy Paladin, 1x Restoration Druid, 1x Elemental Shaman, 1x Enhancement Shaman, 1x Balance Druid, 1x Marksmanship Hunter, 1x Destruction Warlock, 1x Subtlety Rogue, 1x Retribution Paladin, 1x Shadow Priest, 1x Frost Mage, 1x Arcane Mage
+
+  Group 1:
+    - Protection Warrior
+    - Protection Warrior
+    - Feral Druid
+    - Destruction Warlock
+    - Restoration Druid
+  Group 2:
+    - Enhancement Shaman
+    - Retribution Paladin
+    - Fury Warrior
+    - Fury Warrior
+    - Subtlety Rogue
+  Group 3:
+    - Feral Druid
+    - Survival Hunter
+    - Survival Hunter
+    - Marksmanship Hunter
+    - Fury Warrior
+  Group 4:
+    - Elemental Shaman
+    - Shadow Priest
+    - Balance Druid
+    - Arcane Mage
+    - Frost Mage
+  Group 5:
+    - Restoration Shaman
+    - Restoration Shaman
+    - Restoration Shaman
+    - Holy Paladin
+    - Discipline Priest
+
