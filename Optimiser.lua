@@ -476,20 +476,26 @@ function Addon.Optimiser:RefreshGroupBuffs(groups)
                 for _, p in ipairs(groups[g]) do if p.class == cls then return true end end
                 return false
             end
+            local groupSpecCounts = {}
+            local groupClassCounts = {}
+            for _, p in ipairs(groups[g]) do
+                groupSpecCounts[p.spec] = (groupSpecCounts[p.spec] or 0) + 1
+                groupClassCounts[p.class] = (groupClassCounts[p.class] or 0) + 1
+            end
             
             local recs = groups[g].recommendations
             
             local function getDynamicDPSRecommendation(rolePref)
-                if (classCounts["Paladin"] or 0) < 3 then return "Retribution Paladin" end
-                if (classCounts["Shaman"] or 0) < 5 then return "Elemental Shaman" end
-                if (classCounts["Mage"] or 0) < 1 then return "Arcane Mage" end
-                if (classCounts["Priest"] or 0) < 1 then return "Shadow Priest" end
-                if (classCounts["Druid"] or 0) < 1 then return "Balance Druid" end
-                if (classCounts["Warlock"] or 0) < 1 then return "Destruction Warlock" end
-                if (specCounts["Arms"] or 0) < 1 then return "Arms Warrior" end
-                if (specCounts["Survival"] or 0) < 1 then return "Survival Hunter" end
-                if (specCounts["Fire"] or 0) < 1 then return "Fire Mage" end
-                if (specCounts["Discipline"] or 0) < 1 then return "Discipline Priest" end
+                if (classCounts["Paladin"] or 0) < 3 and not groupClassCounts["Paladin"] then return "Retribution Paladin" end
+                if (classCounts["Shaman"] or 0) < 5 and not groupClassCounts["Shaman"] then return "Elemental Shaman" end
+                if (classCounts["Mage"] or 0) < 1 and not groupClassCounts["Mage"] then return "Arcane Mage" end
+                if (classCounts["Priest"] or 0) < 1 and not groupClassCounts["Priest"] then return "Shadow Priest" end
+                if (classCounts["Druid"] or 0) < 1 and not groupClassCounts["Druid"] then return "Balance Druid" end
+                if (classCounts["Warlock"] or 0) < 1 then return "Destruction Warlock" end -- Stackable
+                if (specCounts["Arms"] or 0) < 1 and not groupSpecCounts["Arms"] then return "Arms Warrior" end
+                if (specCounts["Survival"] or 0) < 1 and not groupSpecCounts["Survival"] then return "Survival Hunter" end
+                if (specCounts["Fire"] or 0) < 1 and not groupSpecCounts["Fire"] then return "Fire Mage" end
+                if (specCounts["Discipline"] or 0) < 1 and not groupSpecCounts["Discipline"] then return "Discipline Priest" end
                 
                 if rolePref == "Melee" then return "Fury Warrior"
                 elseif rolePref == "Casters" then return "Destruction Warlock"
@@ -518,6 +524,8 @@ function Addon.Optimiser:RefreshGroupBuffs(groups)
                 if rClass then
                     classCounts[rClass] = (classCounts[rClass] or 0) + 1
                     specCounts[rSpec] = (specCounts[rSpec] or 0) + 1
+                    groupClassCounts[rClass] = (groupClassCounts[rClass] or 0) + 1
+                    groupSpecCounts[rSpec] = (groupSpecCounts[rSpec] or 0) + 1
                 end
                 
                 table_insert(recs, rec)
