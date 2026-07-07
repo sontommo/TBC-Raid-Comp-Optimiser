@@ -1,7 +1,7 @@
 # WoW: The Burning Crusade Anniversary - Raid Composition Optimiser
 *Created by Béautiful - Spineshatter EU*
 
-TBC Raid Comp Optimiser is a powerful, mathematically driven addon designed to automatically sort and optimize your 25-man raid compositions. By simply pasting your roster from Raid-Helper, the engine instantly organizes your raid into 5 perfect groups based on elite TBC Anniversary Edition meta rules. It ensures critical party-wide buffs (like Windfury, Totem of Wrath, and Ferocious Inspiration) are distributed flawlessly, while providing a real-time, dynamic checklist of all active raid synergies to guarantee your raid is fully optimized. 
+TBC Raid Comp Optimiser takes the headache out of building 25-man raid groups. Just paste your roster straight from Raid-Helper, and the addon instantly organises your raid into five perfect groups based on TBC's meta rules. It makes sure that crucial party-wide buffs (like Windfury, Totem of Wrath, and Ferocious Inspiration) go exactly where they're needed, and gives you a real-time checklist to ensure your raid is fully optimised.
 
 ## How to Use
 
@@ -12,60 +12,29 @@ To import your raid roster from Raid-Helper:
 4. Type `/raidcomp` in game.
 5. Copy and paste the full JSON string directly into the addon in-game.
 
-## The Shaman Rule
+## How it Works
 
-Any good raid leader knows that Shamans are the backbone of a TBC raid. Even though Bloodlust and Heroism are now beautifully raid-wide in the Anniversary Edition, **Totems are still party-wide**. That means the absolute best comps run exactly 5 Shamans so you can put **one in every single group**.
+### The Shaman Rule
+Shamans are the backbone of any TBC raid. While Bloodlust and Heroism are raid-wide in the Anniversary Edition, totems are still party-wide. The addon pulls out all your Shamans first and distributes them perfectly:
+- **Melee (Groups 2 & 3):** Gets Enhancement Shamans for Windfury and Unleashed Rage.
+- **Casters (Group 4):** Gets an Elemental Shaman for Totem of Wrath and Wrath of Air.
+- **Healers (Group 5):** Gets a Restoration Shaman for Mana Tide.
+- **Tanks (Group 1):** Gets the remaining Shamans for Tremor, Grace of Air, and Healing Stream.
 
-Because of this, the Optimiser engine pulls out **all Shamans first** before it touches any other class, and distributes them exactly where they need to be:
-- **Melee Groups (Group 2 & 3)**: It forcefully grabs **Enhancement Shamans** and locks them in here. Warriors and Rogues need Windfury Totem and Unleashed Rage to function.
-- **Caster Group (Group 4)**: It grabs an **Elemental Shaman** so your Mages and Warlocks get Totem of Wrath (Spell Crit/Hit) and Wrath of Air (Spell Damage).
-- **Healer Group (Group 5)**: It grabs a **Restoration Shaman** so your main healers get permanent Mana Tide Totem rotations.
-- **Tank Group (Group 1)**: It drops a remaining Resto or flex Shaman in here for Healing Stream Totem, Grace of Air (for dodge), and Tremor Totem so your tanks don't get feared.
-
-If you bring more than 5 Shamans (lucky you), it intelligently overflows them into the most logical backup groups.
-
-## How the Rest of the Raid is Sorted
-
-After the Shamans are perfectly locked in, it sorts the rest of the raid using the elite TBC 25-man meta composition rules:
-
-### 1. The Tanks (Group 1)
-- Protection Warriors, Protection Paladins, and Feral Bears are dumped in here.
-- **Tree of Life**: The engine actively hunts down a **Restoration Druid** and places them into the Tank group. The *Tree of Life* aura passively increases healing received by everyone in the group by 25% of the Druid's spirit.
-- **Blood Pact**: It pulls a Warlock from the ranged pile into the Tank group just so their Imp gives the tanks a massive stamina buff. 
-
-### 2. The Hunter Group (Group 3)
-- All Hunters are completely stripped out of the general ranged pool and aggressively clustered together into Group 3.
-- **Ferocious Inspiration Stacking**: Because Beast Mastery hunters give a 3% damage boost to their party that natively stacks with other hunters, bunching them up creates exponential DPS returns.
-- The engine also hunts down a **Feral Druid** specifically to buff this group with *Leader of the Pack* (5% crit), which directly increases the uptime of *Ferocious Inspiration* and *Expose Weakness*.
-
-### 3. The Melee Pumpers (Group 2)
-- Remaining **Feral Druids** and **Ret Paladins** are slotted in here for *Leader of the Pack* and *Sanctity Aura*.
-- All remaining Fury/Arms Warriors and Rogues fill up the rest of the slots so they can soak up the physical damage auras alongside the Enhancement Shaman's *Windfury Totem*.
-
-### 4. The Casters & Healers (Groups 4 & 5)
-- **Utility Spreading**: Unlike simple sorting addons that clump all support classes together, this engine intelligently distributes your mana batteries. 
-- It round-robins **Shadow Priests** and **Balance Druids** across the Caster Group (Group 4) and Healer Group (Group 5). This ensures their *Vampiric Touch* mana regeneration and *Moonkin Aura* (5% spell crit) are spread out perfectly to prevent wasted overlapping.
-- Remaining pure casters (Mages/Warlocks) backfill into Group 4 with the Elemental Shaman, while remaining healers backfill into Group 5 with the Restoration Shaman.
+### Sorting the Roster
+After the Shamans are sorted, it organises the rest of the team:
+- **Tanks (Group 1):** Protection Warriors, Protection Paladins, and Feral Bears go here. It also hunts down a Restoration Druid for the Tree of Life aura, and a Warlock for the Blood Pact stamina buff.
+- **Hunters (Group 3):** Hunters are grouped together to stack Ferocious Inspiration. It also drops a Feral Druid in here for Leader of the Pack to boost their crit.
+- **Melee (Group 2):** Feral Druids and Retribution Paladins are slotted in for their damage auras, followed by Fury/Arms Warriors and Rogues who can soak up Windfury.
+- **Casters & Healers (Groups 4 & 5):** Shadow Priests and Balance Druids are spread evenly across these groups to maximise Vampiric Touch mana regeneration and Moonkin Aura crit chance without overlapping.
 
 ## The Live Buff Checklist
+You don't need to memorise any of this. The UI features a live, interactive checklist at the bottom of the window:
+- It scans your groups and cross-references them against every major buff in the game.
+- If your Melee group has Windfury Totem and Battle Shout active, the icons light up fully coloured.
+- If you're missing something critical (like Sunder Armour or a Shadow Priest for the healers), the icon turns grey so you instantly know what you need to recruit.
 
-Nobody wants to memorise all this. That's why the UI has a fully interactive, native icon checklist at the bottom of the window.
-- It scans the groups you just built and cross-references them against every buff in the game.
-- If your Melee group has an active Windfury Totem and Battle Shout, the icons light up fully coloured.
-- If you're missing something critical (like no Sunder Armour or no Shadow Priest for the healers), the icon will be greyed out so you instantly know what you're missing.
-
-## Advanced Engine Features
-
-The addon has been significantly upgraded from simple static class tracking to a fully dynamic, context-aware engine:
-
-### 1. Dynamic Context-Aware Buffs
-Instead of locking static buffs to a player's spec, the engine actively inspects the role of the group they are placed in and intelligently swaps their buffs to maximize value:
-- **Shamans**: A Resto Shaman manually dragged into a Melee or Tank group will dynamically unequip *Mana Spring Totem* and start providing *Windfury Totem* to their new group, instantly updating the UI checklist.
-- **Warriors**: A Fury Warrior overflowing into a Casters group will intelligently drop *Battle Shout* and start shouting *Commanding Shout* to give the casters survivability.
-- **Paladins**: A Holy Paladin moved to a Melee group will dynamically switch off *Concentration Aura* and provide the melee with *Devotion Aura* for physical damage reduction.
-
-### 2. High-Resolution Faction Toggling
-A sleek, high-resolution Alliance/Horde toggle on the UI dynamically tracks and swaps your faction spell variations. If you are Alliance, *Bloodlust* (Spell ID 2825) is instantly replaced with *Heroism* (Spell ID 32182) across the entire UI, complete with perfect tooltips and icons.
-
-### 3. Hyper-Optimised `O(1)` Engine
-The internal mathematics engine has been extensively refactored for massive 25-man parsing efficiency. Player totems and auras are calculated exactly once and cached directly onto the player object. The UI tracker utilizes a single-pass `O(N)` loop to build a hash map of raid statistics, eliminating hundreds of redundant loops and allowing the UI to instantly render and evaluate thousands of possible group variations with zero stutter. Memory generation is heavily strictly managed utilizing native `wipe()` API table recycling.
+## Dynamic Context-Aware Buffs
+The engine doesn't just lock buffs to a player's spec; it actively inspects where they've been placed and intelligently swaps their auras to maximise value. 
+- For example, if you move a Restoration Shaman into a melee group, the addon knows they will drop Windfury Totem instead of Mana Spring Totem, and updates the checklist instantly.
+- If a Fury Warrior overflows into a caster group, they'll intelligently use Commanding Shout for survivability instead of Battle Shout.
