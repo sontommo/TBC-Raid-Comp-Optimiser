@@ -826,8 +826,7 @@ function Addon.UI:RenderAssignments(assignmentsData)
                 if assign.player then
                     local colorCode = CLASS_COLORS[assign.player.class] or "|cFFFFFFFF"
                     local shortSpec = string.gsub(assign.player.spec, "%d+$", "")
-                    playerText:SetText(colorCode .. assign.player.name .. "
-(" .. shortSpec .. ")|r")
+                    playerText:SetText(colorCode .. assign.player.name .. "\\n(" .. shortSpec .. ")|r")
                 else
                     playerText:SetText("|cFFFF0000[MISSING]|r")
                 end
