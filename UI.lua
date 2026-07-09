@@ -206,10 +206,50 @@ function Addon.UI:CreateMainFrame()
     allianceBtn:SetScript("OnClick", function() UpdateFaction("Alliance") end)
     hordeBtn:SetScript("OnClick", function() UpdateFaction("Horde") end)
     
-    -- Groups Grid Container
+    -- Tabs
+    local tabComp = CreateSleekButton(f, "Raid Comp", 120, 30)
+    tabComp:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 20, 0)
+    
+    local tabAssign = CreateSleekButton(f, "Assignments", 120, 30)
+    tabAssign:SetPoint("LEFT", tabComp, "RIGHT", 5, 0)
+    
+    -- Groups Grid Container (Tab 1)
     local groupsContainer = CreateFrame("Frame", nil, f)
     groupsContainer:SetPoint("TOPLEFT", 20, -90)
     f.groupsContainer = groupsContainer
+    
+    -- Assignments Container (Tab 2)
+    local assignmentsContainer = CreateFrame("Frame", nil, f)
+    assignmentsContainer:SetPoint("TOPLEFT", 20, -90)
+    assignmentsContainer:SetPoint("BOTTOMRIGHT", -20, 20)
+    assignmentsContainer:Hide()
+    f.assignmentsContainer = assignmentsContainer
+    
+    local assignScroll = CreateFrame("ScrollFrame", nil, assignmentsContainer, "UIPanelScrollFrameTemplate")
+    assignScroll:SetPoint("TOPLEFT", 0, 0)
+    assignScroll:SetPoint("BOTTOMRIGHT", -30, 0)
+    
+    local assignScrollChild = CreateFrame("Frame", nil, assignScroll)
+    assignScrollChild:SetSize(800, 1000)
+    assignScroll:SetScrollChild(assignScrollChild)
+    f.assignScrollChild = assignScrollChild
+    
+    -- Tab Switching Logic
+    tabComp:SetScript("OnClick", function()
+        groupsContainer:Show()
+        if f.buffsBg then f.buffsBg:Show() end
+        assignmentsContainer:Hide()
+        tabComp:SetBackdropColor(0.3, 0.3, 0.3, 1)
+        tabAssign:SetBackdropColor(0.2, 0.2, 0.2, 1)
+    end)
+    tabAssign:SetScript("OnClick", function()
+        groupsContainer:Hide()
+        if f.buffsBg then f.buffsBg:Hide() end
+        assignmentsContainer:Show()
+        tabComp:SetBackdropColor(0.2, 0.2, 0.2, 1)
+        tabAssign:SetBackdropColor(0.3, 0.3, 0.3, 1)
+    end)
+    tabComp:SetBackdropColor(0.3, 0.3, 0.3, 1) -- Active by default
     
     f.groupFrames = {}
     for i=1, 5 do
@@ -693,7 +733,114 @@ function Addon.UI:RenderGroups(groups, activeBuffsList)
         catFrames[i]:Hide()
     end
     
+    local allPlayers = {}
+    for gIndex, group in ipairs(groups) do
+        for pIndex=1, 5 do
+            if group[pIndex] then table_insert(allPlayers, group[pIndex]) end
+        end
+    end
+    if Addon.Assignments and Addon.Assignments.Generate then
+        local assignments = Addon.Assignments:Generate(allPlayers)
+        self:RenderAssignments(assignments)
+    end
+    
     self:Reflow()
+end
+
+function Addon.UI:RenderAssignments(assignmentsData)
+    local parent = self.MainFrame.assignScrollChild
+    if not parent then return end
+    
+    -- Clean previous elements safely
+    if parent.contentFrames then
+        for _, f in ipairs(parent.contentFrames) do f:Hide() end
+    end
+    parent.contentFrames = {}
+    
+    local yOffset = -10
+    
+    for _, raid in ipairs(assignmentsData) do
+        local rHeader = CreateFrame("Frame", nil, parent)
+        table_insert(parent.contentFrames, rHeader)
+        rHeader:SetSize(760, 30)
+        rHeader:SetPoint("TOPLEFT", 10, yOffset)
+        
+        local rt = rHeader:CreateFontString(nil, "OVERLAY")
+        rt:SetPoint("LEFT", 10, 0)
+        rt:SetFontObject("GameFontHighlightLarge")
+        rt:SetText("|cFFFFFF00" .. raid.raidName .. "|r")
+        yOffset = yOffset - 40
+        
+        for _, boss in ipairs(raid.bosses) do
+            local bHeader = CreateFrame("Frame", nil, parent)
+            table_insert(parent.contentFrames, bHeader)
+            bHeader:SetSize(760, 24)
+            bHeader:SetPoint("TOPLEFT", 20, yOffset)
+            
+            local bt = bHeader:CreateFontString(nil, "OVERLAY")
+            bt:SetPoint("LEFT", 10, 0)
+            bt:SetFontObject("GameFontNormalLarge")
+            bt:SetText(boss.bossName)
+            yOffset = yOffset - 30
+            
+            for _, assign in ipairs(boss.assignments) do
+                local aFrame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+                table_insert(parent.contentFrames, aFrame)
+                aFrame:SetSize(740, 40)
+                aFrame:SetPoint("TOPLEFT", 40, yOffset)
+                aFrame:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
+                aFrame:SetBackdropColor(0.15, 0.15, 0.15, 0.8)
+                
+                -- Spell Icon
+                if assign.spellId then
+                    local iconTex = aFrame:CreateTexture(nil, "ARTWORK")
+                    iconTex:SetSize(28, 28)
+                    iconTex:SetPoint("TOPLEFT", 10, -6)
+                    local _, _, tex = GetSpellInfo(assign.spellId)
+                    iconTex:SetTexture(tex or "Interface\\Icons\\INV_Misc_QuestionMark")
+                    
+                    local taskText = aFrame:CreateFontString(nil, "OVERLAY")
+                    taskText:SetFontObject("GameFontHighlight")
+                    taskText:SetPoint("TOPLEFT", 45, -5)
+                    taskText:SetText(assign.taskName)
+                    
+                    local descText = aFrame:CreateFontString(nil, "OVERLAY")
+                    descText:SetFontObject("GameFontHighlightSmall")
+                    descText:SetPoint("BOTTOMLEFT", 45, 5)
+                    descText:SetTextColor(0.6, 0.6, 0.6)
+                    descText:SetText(assign.taskDesc)
+                else
+                    local taskText = aFrame:CreateFontString(nil, "OVERLAY")
+                    taskText:SetFontObject("GameFontHighlight")
+                    taskText:SetPoint("TOPLEFT", 10, -5)
+                    taskText:SetText(assign.taskName)
+                    
+                    local descText = aFrame:CreateFontString(nil, "OVERLAY")
+                    descText:SetFontObject("GameFontHighlightSmall")
+                    descText:SetPoint("BOTTOMLEFT", 10, 5)
+                    descText:SetTextColor(0.6, 0.6, 0.6)
+                    descText:SetText(assign.taskDesc)
+                end
+                
+                local playerText = aFrame:CreateFontString(nil, "OVERLAY")
+                playerText:SetFontObject("GameFontNormal")
+                playerText:SetPoint("TOPRIGHT", -10, -12)
+                
+                if assign.player then
+                    local colorCode = CLASS_COLORS[assign.player.class] or "|cFFFFFFFF"
+                    playerText:SetText(colorCode .. assign.player.name .. " (" .. assign.player.spec .. ")|r")
+                else
+                    playerText:SetText("|cFFFF0000[MISSING SPEC/CLASS]|r")
+                end
+                
+                yOffset = yOffset - 45
+            end
+            yOffset = yOffset - 10
+        end
+        yOffset = yOffset - 20
+    end
+    
+    parent:SetHeight(math_abs(yOffset))
 end
 
 function Addon.UI:Reflow()

@@ -7,5 +7,6 @@
 
 Libs\json.lua
 Optimiser.lua
+Assignments.lua
 UI.lua
 Core.lua
