@@ -768,11 +768,12 @@ function Addon.UI:RenderAssignments(assignmentsData)
             for _, assign in ipairs(boss.assignments) do
                 local aFrame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
                 table_insert(parent.contentFrames, aFrame)
-                aFrame:SetSize(colWidth - 20, 45)
+                aFrame:SetSize(colWidth - 20, 60)
                 aFrame:SetPoint("TOPLEFT", xOffset + 10, yOffset)
                 aFrame:SetBackdrop({ bgFile = "Interface\Buttons\WHITE8x8" })
                 aFrame:SetBackdropColor(0.15, 0.15, 0.15, 0.8)
                 
+                local textLeft = 10
                 -- Spell Icon
                 if assign.spellId then
                     local iconTex = aFrame:CreateTexture(nil, "ARTWORK")
@@ -780,58 +781,39 @@ function Addon.UI:RenderAssignments(assignmentsData)
                     iconTex:SetPoint("TOPLEFT", 5, -8)
                     local _, _, tex = GetSpellInfo(assign.spellId)
                     iconTex:SetTexture(tex or "Interface\Icons\INV_Misc_QuestionMark")
-                    
-                    local taskText = aFrame:CreateFontString(nil, "OVERLAY")
-                    taskText:SetFontObject("GameFontHighlight")
-                    taskText:SetPoint("TOPLEFT", 40, -5)
-                    taskText:SetWidth(colWidth - 110)
-                    taskText:SetHeight(15)
-                    taskText:SetJustifyH("LEFT")
-                    taskText:SetText(assign.taskName)
-                    
-                    local descText = aFrame:CreateFontString(nil, "OVERLAY")
-                    descText:SetFontObject("GameFontHighlightSmall")
-                    descText:SetPoint("BOTTOMLEFT", 40, 5)
-                    descText:SetWidth(colWidth - 110)
-                    descText:SetHeight(25)
-                    descText:SetJustifyH("LEFT")
-                    descText:SetJustifyV("TOP")
-                    descText:SetTextColor(0.6, 0.6, 0.6)
-                    descText:SetText(assign.taskDesc)
-                else
-                    local taskText = aFrame:CreateFontString(nil, "OVERLAY")
-                    taskText:SetFontObject("GameFontHighlight")
-                    taskText:SetPoint("TOPLEFT", 5, -5)
-                    taskText:SetWidth(colWidth - 75)
-                    taskText:SetHeight(15)
-                    taskText:SetJustifyH("LEFT")
-                    taskText:SetText(assign.taskName)
-                    
-                    local descText = aFrame:CreateFontString(nil, "OVERLAY")
-                    descText:SetFontObject("GameFontHighlightSmall")
-                    descText:SetPoint("BOTTOMLEFT", 5, 5)
-                    descText:SetWidth(colWidth - 75)
-                    descText:SetHeight(25)
-                    descText:SetJustifyH("LEFT")
-                    descText:SetJustifyV("TOP")
-                    descText:SetTextColor(0.6, 0.6, 0.6)
-                    descText:SetText(assign.taskDesc)
+                    textLeft = 40
                 end
+                
+                local taskText = aFrame:CreateFontString(nil, "OVERLAY")
+                taskText:SetFontObject("GameFontHighlight")
+                taskText:SetPoint("TOPLEFT", textLeft, -5)
+                taskText:SetWidth(colWidth - textLeft - 15)
+                taskText:SetJustifyH("LEFT")
+                taskText:SetText(assign.taskName)
                 
                 local playerText = aFrame:CreateFontString(nil, "OVERLAY")
                 playerText:SetFontObject("GameFontNormalSmall")
-                playerText:SetPoint("TOPRIGHT", -5, -5)
-                playerText:SetJustifyH("RIGHT")
+                playerText:SetPoint("TOPLEFT", textLeft, -20)
+                playerText:SetJustifyH("LEFT")
                 
                 if assign.player then
                     local colorCode = CLASS_COLORS[assign.player.class] or "|cFFFFFFFF"
-                    local shortSpec = string.gsub(assign.player.spec, "%d+$", "")
-                    playerText:SetText(colorCode .. assign.player.name .. "\\n(" .. shortSpec .. ")|r")
+                    playerText:SetText(colorCode .. assign.player.name .. "|r")
                 else
                     playerText:SetText("|cFFFF0000[MISSING]|r")
                 end
                 
-                yOffset = yOffset - 50
+                local descText = aFrame:CreateFontString(nil, "OVERLAY")
+                descText:SetFontObject("GameFontHighlightSmall")
+                descText:SetPoint("TOPLEFT", textLeft, -35)
+                descText:SetWidth(colWidth - textLeft - 15)
+                descText:SetHeight(20)
+                descText:SetJustifyH("LEFT")
+                descText:SetJustifyV("TOP")
+                descText:SetTextColor(0.6, 0.6, 0.6)
+                descText:SetText(assign.taskDesc)
+                
+                yOffset = yOffset - 65
             end
             yOffset = yOffset - 10
         end
