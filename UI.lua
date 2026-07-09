@@ -208,10 +208,10 @@ function Addon.UI:CreateMainFrame()
     
     -- Tabs (Top Right)
     local tabAssign = CreateSleekButton(f, "Assignments", 120, 30)
-    tabAssign:SetPoint("TOPRIGHT", -20, -45)
+    tabAssign:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -45)
     
     local tabComp = CreateSleekButton(f, "Raid Comp", 120, 30)
-    tabComp:SetPoint("RIGHT", tabAssign, "LEFT", -5, 0)
+    tabComp:SetPoint("TOPRIGHT", f, "TOPRIGHT", -145, -45)
     
     -- Groups Grid Container (Tab 1)
     local groupsContainer = CreateFrame("Frame", nil, f)
