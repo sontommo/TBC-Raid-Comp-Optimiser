@@ -731,16 +731,24 @@ function Addon.UI:RenderAssignments(assignmentsData)
     end
     parent.contentFrames = {}
     
-    local yOffset = -10
+    local numColumns = #assignmentsData
+    if numColumns == 0 then numColumns = 1 end
     
-    for _, raid in ipairs(assignmentsData) do
+    local windowWidth = 1100
+    local colWidth = windowWidth / numColumns
+    local globalMaxY = 0
+    
+    for colIndex, raid in ipairs(assignmentsData) do
+        local xOffset = (colIndex - 1) * colWidth + 10
+        local yOffset = -10
+        
         local rHeader = CreateFrame("Frame", nil, parent)
         table_insert(parent.contentFrames, rHeader)
-        rHeader:SetSize(760, 30)
-        rHeader:SetPoint("TOPLEFT", 10, yOffset)
+        rHeader:SetSize(colWidth - 20, 30)
+        rHeader:SetPoint("TOPLEFT", xOffset, yOffset)
         
         local rt = rHeader:CreateFontString(nil, "OVERLAY")
-        rt:SetPoint("LEFT", 10, 0)
+        rt:SetPoint("LEFT", 5, 0)
         rt:SetFontObject("GameFontHighlightLarge")
         rt:SetText("|cFFFFFF00" .. raid.raidName .. "|r")
         yOffset = yOffset - 40
@@ -748,11 +756,11 @@ function Addon.UI:RenderAssignments(assignmentsData)
         for _, boss in ipairs(raid.bosses) do
             local bHeader = CreateFrame("Frame", nil, parent)
             table_insert(parent.contentFrames, bHeader)
-            bHeader:SetSize(760, 24)
-            bHeader:SetPoint("TOPLEFT", 20, yOffset)
+            bHeader:SetSize(colWidth - 20, 24)
+            bHeader:SetPoint("TOPLEFT", xOffset + 5, yOffset)
             
             local bt = bHeader:CreateFontString(nil, "OVERLAY")
-            bt:SetPoint("LEFT", 10, 0)
+            bt:SetPoint("LEFT", 0, 0)
             bt:SetFontObject("GameFontNormalLarge")
             bt:SetText(boss.bossName)
             yOffset = yOffset - 30
@@ -760,61 +768,80 @@ function Addon.UI:RenderAssignments(assignmentsData)
             for _, assign in ipairs(boss.assignments) do
                 local aFrame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
                 table_insert(parent.contentFrames, aFrame)
-                aFrame:SetSize(740, 40)
-                aFrame:SetPoint("TOPLEFT", 40, yOffset)
-                aFrame:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
+                aFrame:SetSize(colWidth - 20, 45)
+                aFrame:SetPoint("TOPLEFT", xOffset + 10, yOffset)
+                aFrame:SetBackdrop({ bgFile = "Interface\Buttons\WHITE8x8" })
                 aFrame:SetBackdropColor(0.15, 0.15, 0.15, 0.8)
                 
                 -- Spell Icon
                 if assign.spellId then
                     local iconTex = aFrame:CreateTexture(nil, "ARTWORK")
                     iconTex:SetSize(28, 28)
-                    iconTex:SetPoint("TOPLEFT", 10, -6)
+                    iconTex:SetPoint("TOPLEFT", 5, -8)
                     local _, _, tex = GetSpellInfo(assign.spellId)
-                    iconTex:SetTexture(tex or "Interface\\Icons\\INV_Misc_QuestionMark")
+                    iconTex:SetTexture(tex or "Interface\Icons\INV_Misc_QuestionMark")
                     
                     local taskText = aFrame:CreateFontString(nil, "OVERLAY")
                     taskText:SetFontObject("GameFontHighlight")
-                    taskText:SetPoint("TOPLEFT", 45, -5)
+                    taskText:SetPoint("TOPLEFT", 40, -5)
+                    taskText:SetWidth(colWidth - 110)
+                    taskText:SetHeight(15)
+                    taskText:SetJustifyH("LEFT")
                     taskText:SetText(assign.taskName)
                     
                     local descText = aFrame:CreateFontString(nil, "OVERLAY")
                     descText:SetFontObject("GameFontHighlightSmall")
-                    descText:SetPoint("BOTTOMLEFT", 45, 5)
+                    descText:SetPoint("BOTTOMLEFT", 40, 5)
+                    descText:SetWidth(colWidth - 110)
+                    descText:SetHeight(25)
+                    descText:SetJustifyH("LEFT")
+                    descText:SetJustifyV("TOP")
                     descText:SetTextColor(0.6, 0.6, 0.6)
                     descText:SetText(assign.taskDesc)
                 else
                     local taskText = aFrame:CreateFontString(nil, "OVERLAY")
                     taskText:SetFontObject("GameFontHighlight")
-                    taskText:SetPoint("TOPLEFT", 10, -5)
+                    taskText:SetPoint("TOPLEFT", 5, -5)
+                    taskText:SetWidth(colWidth - 75)
+                    taskText:SetHeight(15)
+                    taskText:SetJustifyH("LEFT")
                     taskText:SetText(assign.taskName)
                     
                     local descText = aFrame:CreateFontString(nil, "OVERLAY")
                     descText:SetFontObject("GameFontHighlightSmall")
-                    descText:SetPoint("BOTTOMLEFT", 10, 5)
+                    descText:SetPoint("BOTTOMLEFT", 5, 5)
+                    descText:SetWidth(colWidth - 75)
+                    descText:SetHeight(25)
+                    descText:SetJustifyH("LEFT")
+                    descText:SetJustifyV("TOP")
                     descText:SetTextColor(0.6, 0.6, 0.6)
                     descText:SetText(assign.taskDesc)
                 end
                 
                 local playerText = aFrame:CreateFontString(nil, "OVERLAY")
-                playerText:SetFontObject("GameFontNormal")
-                playerText:SetPoint("TOPRIGHT", -10, -12)
+                playerText:SetFontObject("GameFontNormalSmall")
+                playerText:SetPoint("TOPRIGHT", -5, -5)
+                playerText:SetJustifyH("RIGHT")
                 
                 if assign.player then
                     local colorCode = CLASS_COLORS[assign.player.class] or "|cFFFFFFFF"
-                    playerText:SetText(colorCode .. assign.player.name .. " (" .. assign.player.spec .. ")|r")
+                    local shortSpec = string.gsub(assign.player.spec, "%d+$", "")
+                    playerText:SetText(colorCode .. assign.player.name .. "
+(" .. shortSpec .. ")|r")
                 else
-                    playerText:SetText("|cFFFF0000[MISSING SPEC/CLASS]|r")
+                    playerText:SetText("|cFFFF0000[MISSING]|r")
                 end
                 
-                yOffset = yOffset - 45
+                yOffset = yOffset - 50
             end
             yOffset = yOffset - 10
         end
-        yOffset = yOffset - 20
+        if math_abs(yOffset) > globalMaxY then
+            globalMaxY = math_abs(yOffset)
+        end
     end
     
-    parent:SetHeight(math_abs(yOffset))
+    parent:SetHeight(globalMaxY + 20)
 end
 
 function Addon.UI:Reflow()
@@ -903,7 +930,7 @@ end
 
 function Addon.UI:CreateAssignmentsFrame()
     local f = CreateFrame('Frame', 'TBCRaidCompAssignmentsFrame', UIParent, 'BackdropTemplate')
-    f:SetSize(800, 600)
+    f:SetSize(1150, 700)
     f:SetPoint('CENTER')
     f:SetMovable(true)
     f:SetResizable(true)
@@ -944,7 +971,7 @@ function Addon.UI:CreateAssignmentsFrame()
     assignScroll:SetPoint('BOTTOMRIGHT', -40, 20)
     
     local assignScrollChild = CreateFrame('Frame', nil, assignScroll)
-    assignScrollChild:SetSize(740, 1000)
+    assignScrollChild:SetSize(1100, 1000)
     assignScroll:SetScrollChild(assignScrollChild)
     f.assignScrollChild = assignScrollChild
     
