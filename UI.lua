@@ -206,12 +206,12 @@ function Addon.UI:CreateMainFrame()
     allianceBtn:SetScript("OnClick", function() UpdateFaction("Alliance") end)
     hordeBtn:SetScript("OnClick", function() UpdateFaction("Horde") end)
     
-    -- Tabs
-    local tabComp = CreateSleekButton(f, "Raid Comp", 120, 30)
-    tabComp:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 20, 0)
-    
+    -- Tabs (Top Right)
     local tabAssign = CreateSleekButton(f, "Assignments", 120, 30)
-    tabAssign:SetPoint("LEFT", tabComp, "RIGHT", 5, 0)
+    tabAssign:SetPoint("TOPRIGHT", -20, -45)
+    
+    local tabComp = CreateSleekButton(f, "Raid Comp", 120, 30)
+    tabComp:SetPoint("RIGHT", tabAssign, "LEFT", -5, 0)
     
     -- Groups Grid Container (Tab 1)
     local groupsContainer = CreateFrame("Frame", nil, f)
