@@ -294,25 +294,54 @@ function Addon.Optimiser:Optimise(players)
     pullOne(roles.warlocks, {1})
     pullOne(roles.restoDruids, {1})
     
-    -- Phase 2: The Shamans
+    -- Phase 2: The Shamans (Spread to maximize Bloodlust and Totem buffs)
+    local function getShamanCount(g)
+        local count = 0
+        for _, p in ipairs(groups[g]) do
+            if p.class == "Shaman" then count = count + 1 end
+        end
+        return count
+    end
+    
+    local function placeShaman(p, prefs)
+        local bestG = nil
+        local bestCount = 99
+        local bestPriority = 99
+        for i, g in ipairs(prefs) do
+            if getFree(g) > 0 then
+                local c = getShamanCount(g)
+                if c < bestCount then
+                    bestCount = c
+                    bestG = g
+                    bestPriority = i
+                elseif c == bestCount and i < bestPriority then
+                    bestCount = c
+                    bestG = g
+                    bestPriority = i
+                end
+            end
+        end
+        if bestG then
+            addToGroup(p, bestG)
+            return true
+        end
+        return false
+    end
+    
     for i = #roles.enhanceShamans, 1, -1 do
-        local p = roles.enhanceShamans[i]
-        local placed = addToGroup(p, 2) or addToGroup(p, 3) or addToGroup(p, 1) or addToGroup(p, 2) or addToGroup(p, 3)
-        if placed then table_remove(roles.enhanceShamans, i) end
+        if placeShaman(roles.enhanceShamans[i], {2, 3, 1, 4, 5}) then
+            table_remove(roles.enhanceShamans, i)
+        end
     end
     for i = #roles.eleShamans, 1, -1 do
-        local p = roles.eleShamans[i]
-        local placed = addToGroup(p, 4) or addToGroup(p, 5) or addToGroup(p, 4)
-        if placed then table_remove(roles.eleShamans, i) end
+        if placeShaman(roles.eleShamans[i], {4, 5, 3, 2, 1}) then
+            table_remove(roles.eleShamans, i)
+        end
     end
     for i = #roles.restoShamans, 1, -1 do
-        local p = roles.restoShamans[i]
-        local g1NeedsShaman = true
-        for _, m in ipairs(groups[1]) do if m.class == "Shaman" then g1NeedsShaman = false break end end
-        local placed = false
-        if g1NeedsShaman then placed = addToGroup(p, 1) end
-        if not placed then placed = addToGroup(p, 5) or addToGroup(p, 4) end
-        if placed then table_remove(roles.restoShamans, i) end
+        if placeShaman(roles.restoShamans[i], {1, 5, 4, 3, 2}) then
+            table_remove(roles.restoShamans, i)
+        end
     end
     
     -- Phase 3: The Mana Batteries (Shadow / Boomkin)

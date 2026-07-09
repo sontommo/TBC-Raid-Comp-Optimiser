@@ -911,6 +911,7 @@ function Addon.UI:CreateAssignmentsFrame()
     f:RegisterForDrag('LeftButton')
     f:SetScript('OnDragStart', f.StartMoving)
     f:SetScript('OnDragStop', f.StopMovingOrSizing)
+    f:SetFrameStrata("DIALOG")
     f:Hide()
     
     f:SetBackdrop({
