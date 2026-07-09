@@ -11,6 +11,7 @@ local table_insert = table.insert
 
 function Addon.Core:OnInitialize()
     Addon.UI:CreateMainFrame()
+    Addon.UI:CreateAssignmentsFrame()
     
     SLASH_TBCRAIDCOMP1 = "/raidcomp"
     SlashCmdList["TBCRAIDCOMP"] = function(msg)

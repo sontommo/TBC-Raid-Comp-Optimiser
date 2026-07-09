@@ -206,50 +206,23 @@ function Addon.UI:CreateMainFrame()
     allianceBtn:SetScript("OnClick", function() UpdateFaction("Alliance") end)
     hordeBtn:SetScript("OnClick", function() UpdateFaction("Horde") end)
     
-    -- Tabs (Top Right)
-    local tabAssign = CreateSleekButton(f, "Assignments", 120, 30)
-    tabAssign:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -45)
+    -- Assignments Window Toggle
+    local assignBtn = CreateSleekButton(f, "Show Assignments", 150, 30)
+    assignBtn:SetPoint("TOPRIGHT", f, "TOPRIGHT", -20, -45)
+    assignBtn:SetScript("OnClick", function()
+        if Addon.UI.AssignmentsFrame then
+            if Addon.UI.AssignmentsFrame:IsShown() then
+                Addon.UI.AssignmentsFrame:Hide()
+            else
+                Addon.UI.AssignmentsFrame:Show()
+            end
+        end
+    end)
     
-    local tabComp = CreateSleekButton(f, "Raid Comp", 120, 30)
-    tabComp:SetPoint("TOPRIGHT", f, "TOPRIGHT", -145, -45)
-    
-    -- Groups Grid Container (Tab 1)
+    -- Groups Grid Container (Main View)
     local groupsContainer = CreateFrame("Frame", nil, f)
     groupsContainer:SetPoint("TOPLEFT", 20, -90)
     f.groupsContainer = groupsContainer
-    
-    -- Assignments Container (Tab 2)
-    local assignmentsContainer = CreateFrame("Frame", nil, f)
-    assignmentsContainer:SetPoint("TOPLEFT", 20, -90)
-    assignmentsContainer:SetPoint("BOTTOMRIGHT", -20, 20)
-    assignmentsContainer:Hide()
-    f.assignmentsContainer = assignmentsContainer
-    
-    local assignScroll = CreateFrame("ScrollFrame", nil, assignmentsContainer, "UIPanelScrollFrameTemplate")
-    assignScroll:SetPoint("TOPLEFT", 0, 0)
-    assignScroll:SetPoint("BOTTOMRIGHT", -30, 0)
-    
-    local assignScrollChild = CreateFrame("Frame", nil, assignScroll)
-    assignScrollChild:SetSize(800, 1000)
-    assignScroll:SetScrollChild(assignScrollChild)
-    f.assignScrollChild = assignScrollChild
-    
-    -- Tab Switching Logic
-    tabComp:SetScript("OnClick", function()
-        groupsContainer:Show()
-        if f.buffsBg then f.buffsBg:Show() end
-        assignmentsContainer:Hide()
-        tabComp:SetBackdropColor(0.3, 0.3, 0.3, 1)
-        tabAssign:SetBackdropColor(0.2, 0.2, 0.2, 1)
-    end)
-    tabAssign:SetScript("OnClick", function()
-        groupsContainer:Hide()
-        if f.buffsBg then f.buffsBg:Hide() end
-        assignmentsContainer:Show()
-        tabComp:SetBackdropColor(0.2, 0.2, 0.2, 1)
-        tabAssign:SetBackdropColor(0.3, 0.3, 0.3, 1)
-    end)
-    tabComp:SetBackdropColor(0.3, 0.3, 0.3, 1) -- Active by default
     
     f.groupFrames = {}
     for i=1, 5 do
@@ -748,7 +721,8 @@ function Addon.UI:RenderGroups(groups, activeBuffsList)
 end
 
 function Addon.UI:RenderAssignments(assignmentsData)
-    local parent = self.MainFrame.assignScrollChild
+    if not self.AssignmentsFrame then return end
+    local parent = self.AssignmentsFrame.assignScrollChild
     if not parent then return end
     
     -- Clean previous elements safely
@@ -926,3 +900,53 @@ function Addon.UI:Reflow()
         f.buffsBg:SetHeight(buffsHeight)
     end
 end
+
+function Addon.UI:CreateAssignmentsFrame()
+    local f = CreateFrame('Frame', 'TBCRaidCompAssignmentsFrame', UIParent, 'BackdropTemplate')
+    f:SetSize(800, 600)
+    f:SetPoint('CENTER')
+    f:SetMovable(true)
+    f:SetResizable(true)
+    f:EnableMouse(true)
+    f:RegisterForDrag('LeftButton')
+    f:SetScript('OnDragStart', f.StartMoving)
+    f:SetScript('OnDragStop', f.StopMovingOrSizing)
+    f:Hide()
+    
+    f:SetBackdrop({
+        bgFile = 'Interface\\Buttons\\WHITE8x8',
+        edgeFile = 'Interface\\Buttons\\WHITE8x8',
+        edgeSize = 1,
+    })
+    f:SetBackdropColor(0.12, 0.12, 0.12, 0.95)
+    f:SetBackdropBorderColor(0, 0, 0, 1)
+
+    -- Title Bar
+    local titleBar = CreateFrame('Frame', nil, f, 'BackdropTemplate')
+    titleBar:SetPoint('TOPLEFT', 1, -1)
+    titleBar:SetPoint('TOPRIGHT', -1, -1)
+    titleBar:SetHeight(30)
+    titleBar:SetBackdrop({ bgFile = 'Interface\\Buttons\\WHITE8x8' })
+    titleBar:SetBackdropColor(0.08, 0.08, 0.08, 1)
+    
+    local title = titleBar:CreateFontString(nil, 'OVERLAY')
+    title:SetFontObject('GameFontHighlightLarge')
+    title:SetPoint('LEFT', 10, 0)
+    title:SetText('Assignments')
+    
+    local closeBtn = CreateFrame('Button', nil, titleBar, 'UIPanelCloseButton')
+    closeBtn:SetPoint('RIGHT', 0, 0)
+    closeBtn:SetScript('OnClick', function() f:Hide() end)
+
+    local assignScroll = CreateFrame('ScrollFrame', nil, f, 'UIPanelScrollFrameTemplate')
+    assignScroll:SetPoint('TOPLEFT', 20, -50)
+    assignScroll:SetPoint('BOTTOMRIGHT', -40, 20)
+    
+    local assignScrollChild = CreateFrame('Frame', nil, assignScroll)
+    assignScrollChild:SetSize(740, 1000)
+    assignScroll:SetScrollChild(assignScrollChild)
+    f.assignScrollChild = assignScrollChild
+    
+    Addon.UI.AssignmentsFrame = f
+end
+
